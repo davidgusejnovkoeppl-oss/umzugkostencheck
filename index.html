@@ -527,7 +527,9 @@
     <div class="container">
       <div class="badge">Kostenlose &amp; unverbindliche Umzugsanfrage</div>
       <h1 class="hero-title">Umzugskosten vergleichen</h1>
-      <p class="hero-subtitle">In wenigen Schritten Angebote von qualifizierten Umzugsunternehmen erhalten.</p>
+      <p class="hero-subtitle">
+        In wenigen Schritten kostenlos und unverbindlich Angebote von qualifizierten Umzugsunternehmen erhalten.
+      </p>
 
       <div class="trust-row">
         <div class="trust-item">
@@ -572,11 +574,6 @@
       <div class="step-item" data-step="5">
         <div class="step-circle"><span>5</span></div>
         <div class="step-label">Kontakt</div>
-        <div class="step-line"></div>
-      </div>
-      <div class="step-item" data-step="6">
-        <div class="step-circle"><span>6</span></div>
-        <div class="step-label">Fertig</div>
       </div>
     </div>
 
@@ -901,7 +898,7 @@
 </div>
 
 <script>
-  const TOTAL_STEPS = 5; // letzter „Form-Schritt“ ist 5, Schritt 6 = reine Dankesseite
+  const TOTAL_STEPS = 5; // letzter Form-Schritt 5, Schritt 6 = Dankeseite
   let currentStep = 1;
   const formData = {};
   let todayStr = null;
@@ -938,7 +935,6 @@
 
     btnBack.disabled = (step === 1);
 
-    // Step 4: kein Weiter-Button
     if(step === 4){
       btnNext.style.display = "none";
       runMatchingAnimation();
@@ -946,25 +942,21 @@
       btnNext.style.display = "inline-flex";
     }
 
-    // Step 6: keine Navigation mehr anzeigen
     if(navRow){
       navRow.style.display = (step === 6) ? "none" : "flex";
     }
 
-    // Button-Text: nur bei Schritt 5 „Angebote erhalten“
     btnNext.textContent = (step === 5) ? "Angebote erhalten" : "Weiter";
 
     validateStep();
   }
 
   function collectData(){
-    // Step 1
     formData.move_from_zip = document.getElementById("move_from_zip").value.trim();
     formData.move_from_city = document.getElementById("move_from_city").value.trim();
     formData.move_to_zip = document.getElementById("move_to_zip").value.trim();
     formData.move_to_city = document.getElementById("move_to_city").value.trim();
 
-    // Step 2
     formData.living_space_from = document.getElementById("living_space_from").value;
     formData.rooms_from = document.getElementById("rooms_from").value;
     formData.floor_from = document.getElementById("floor_from").value;
@@ -975,10 +967,8 @@
     formData.floor_to = document.getElementById("floor_to").value;
     formData.has_elevator_to = document.getElementById("has_elevator_to").checked;
 
-    // Step 3 (Choice-Cards + optionales Textfeld)
     formData.move_notes = document.getElementById("move_notes")?.value.trim() || "";
 
-    // Step 5
     formData.customer_name = document.getElementById("customer_name").value.trim();
     formData.phone = document.getElementById("phone").value.trim();
     formData.email = document.getElementById("email").value.trim();
@@ -1070,7 +1060,7 @@
       }
     }
 
-    if(currentStep !== 4){ // in Step 4 gibt es keinen Weiter-Button
+    if(currentStep !== 4){
       btnNext.disabled = !valid;
     }
     return valid;
@@ -1088,12 +1078,9 @@
     if(currentStep < TOTAL_STEPS){
       showStep(currentStep+1);
     }else{
-      // Schritt 5 -> Absenden
       collectData();
       console.log("Formular-Daten:", formData);
       document.querySelector("main.card").scrollIntoView({behavior:"smooth"});
-
-      // Navigation deaktivieren & Dankesseite (Schritt 6) anzeigen
       btnBack.disabled = true;
       btnNext.disabled = true;
       showStep(6);
@@ -1144,7 +1131,7 @@
     });
   });
 
-  // Nur Ziffern in Telefonfeld
+  // Telefon / Verifizierung
   const phoneInput = document.getElementById("phone");
   const verificationBox = document.getElementById("verificationBox");
   const verifyCodeBox = document.getElementById("verifyCodeBox");
@@ -1171,7 +1158,6 @@
   if(btnResendCode){
     btnResendCode.addEventListener("click", ()=>{
       console.log("Code erneut senden angeklickt");
-      // Hier könnte später ein erneuter SMS-Versand eingebunden werden
     });
   }
 
@@ -1181,13 +1167,11 @@
     loadingBox.style.display = "block";
     resultBox.style.display = "none";
 
-    // Nach 2 Sekunden Ergebnis anzeigen
     setTimeout(()=>{
       loadingBox.style.display = "none";
       resultBox.style.display = "block";
     },2000);
 
-    // Nach insgesamt 4 Sekunden automatisch zu Schritt 5
     setTimeout(()=>{
       if(currentStep === 4){
         showStep(5);
@@ -1195,7 +1179,6 @@
     },4000);
   }
 
-  // Initial
   initDatesMin();
   validateStep();
 </script>
