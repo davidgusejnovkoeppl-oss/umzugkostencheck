@@ -426,11 +426,28 @@
 
     .success-message{
       text-align:center;
-      padding:2rem 1rem 0.5rem;
+      padding:2.4rem 1rem 2.6rem;
     }
     .success-message h2{
       font-size:1.5rem;
       margin-bottom:0.75rem;
+    }
+
+    .success-circle{
+      width:80px;
+      height:80px;
+      border-radius:999px;
+      background:radial-gradient(circle at center,#22c55e,#16a34a);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:0 auto 1.2rem;
+      box-shadow:0 16px 40px rgba(34,197,94,0.45);
+    }
+    .success-circle span{
+      color:#fff;
+      font-size:2rem;
+      font-weight:700;
     }
 
     /* SMS-Box */
@@ -471,8 +488,19 @@
     .verify-code input{
       max-width:140px;
     }
+    .verify-resend{
+      margin-top:0.25rem;
+      background:none;
+      border:none;
+      padding:0;
+      font-size:0.8rem;
+      color:var(--blue-600);
+      text-decoration:underline;
+      cursor:pointer;
+      align-self:flex-start;
+    }
 
-    /* Zusammenfassung nach dem Absenden (unbenutzt, aber ok) */
+    /* (unbenutzte) Zusammenfassungskarte – kann bleiben */
     .summary-message{
       margin-top:1.5rem;
       padding:1rem 1.1rem;
@@ -544,6 +572,11 @@
       <div class="step-item" data-step="5">
         <div class="step-circle"><span>5</span></div>
         <div class="step-label">Kontakt</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-item" data-step="6">
+        <div class="step-circle"><span>6</span></div>
+        <div class="step-label">Fertig</div>
       </div>
     </div>
 
@@ -743,7 +776,7 @@
       <!-- Ergebnis -->
       <div id="matchingResult" style="display:none;">
         <h2 class="step-title">Unternehmen in Ihrer Nähe gefunden!</h2>
-        <p class="step-subtitle">Wir haben passende Umzugspartner in Ihrer Region identifiziert.</p>
+        <p class="step-subtitle">Wir haben passende Umzugsunternehmen in Ihrer Region identifiziert.</p>
 
         <div class="matching-circle">
           <span>✓</span>
@@ -798,7 +831,7 @@
               <div id="verifyCodeBox" class="verify-code" style="display:none;">
                 <label for="verify_code">SMS-Code eingeben (optional)</label>
                 <input id="verify_code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="z.B. 123456" />
-                <span class="hint">Die Verifizierung ist freiwillig und kein Pflichtfeld.</span>
+                <button type="button" id="btnResendCode" class="verify-resend">Code erneut senden</button>
               </div>
             </div>
           </div>
@@ -841,30 +874,34 @@
       </p>
     </div>
 
-    <!-- Nav row -->
-    <div class="nav-row">
-      <button class="btn btn-outline" id="btnBack">Zurück</button>
-      <button class="btn btn-primary" id="btnNext">Weiter</button>
-    </div>
-
-    <!-- Erfolg – wird nach dem Absenden angezeigt -->
-    <div id="success" style="display:none;">
+    <!-- STEP 6: FERTIG / DANKESSEITE -->
+    <div class="form-step" data-step="6">
       <div class="success-message">
+        <div class="success-circle">
+          <span>✓</span>
+        </div>
         <h2>Vielen Dank für Ihre Anfrage!</h2>
         <p class="hint">
           Ihre Daten wurden gespeichert. In der Regel erhalten Sie innerhalb von 24&nbsp;Stunden erste Angebote
           von Umzugsunternehmen aus Ihrer Region.
         </p>
         <p class="hint" style="margin-top:0.75rem;">
-          Datenschutz: Ihre Daten werden ausschließlich zur Vermittlung von Umzugsangeboten verwendet und nicht an Dritte weitergegeben.
+          Datenschutz: Ihre Daten werden ausschließlich zur Vermittlung von Umzugsangeboten verwendet
+          und nicht an Dritte weitergegeben.
         </p>
       </div>
+    </div>
+
+    <!-- Nav row -->
+    <div class="nav-row" id="navRow">
+      <button class="btn btn-outline" id="btnBack">Zurück</button>
+      <button class="btn btn-primary" id="btnNext">Weiter</button>
     </div>
   </main>
 </div>
 
 <script>
-  const TOTAL_STEPS = 5;
+  const TOTAL_STEPS = 5; // letzter „Form-Schritt“ ist 5, Schritt 6 = reine Dankesseite
   let currentStep = 1;
   const formData = {};
   let todayStr = null;
@@ -873,7 +910,7 @@
   const indicatorItems = document.querySelectorAll("#stepIndicator .step-item");
   const btnBack = document.getElementById("btnBack");
   const btnNext = document.getElementById("btnNext");
-  const successBox = document.getElementById("success");
+  const navRow = document.getElementById("navRow");
 
   const loadingBox = document.getElementById("matchingLoading");
   const resultBox = document.getElementById("matchingResult");
@@ -909,7 +946,14 @@
       btnNext.style.display = "inline-flex";
     }
 
-    btnNext.textContent = (step === TOTAL_STEPS) ? "Angebote erhalten" : "Weiter";
+    // Step 6: keine Navigation mehr anzeigen
+    if(navRow){
+      navRow.style.display = (step === 6) ? "none" : "flex";
+    }
+
+    // Button-Text: nur bei Schritt 5 „Angebote erhalten“
+    btnNext.textContent = (step === 5) ? "Angebote erhalten" : "Weiter";
+
     validateStep();
   }
 
@@ -1044,19 +1088,15 @@
     if(currentStep < TOTAL_STEPS){
       showStep(currentStep+1);
     }else{
-      // Submit (hier später API/Backend anbinden)
+      // Schritt 5 -> Absenden
       collectData();
       console.log("Formular-Daten:", formData);
       document.querySelector("main.card").scrollIntoView({behavior:"smooth"});
 
-      // Formular-Navigation deaktivieren
+      // Navigation deaktivieren & Dankesseite (Schritt 6) anzeigen
       btnBack.disabled = true;
       btnNext.disabled = true;
-
-      // Erfolgsnachricht auf derselben Seite anzeigen
-      if(successBox){
-        successBox.style.display = "block";
-      }
+      showStep(6);
     }
   });
 
@@ -1110,6 +1150,7 @@
   const verifyCodeBox = document.getElementById("verifyCodeBox");
   const btnStartVerify = document.getElementById("btnStartVerify");
   const verifyCodeInput = document.getElementById("verify_code");
+  const btnResendCode = document.getElementById("btnResendCode");
 
   phoneInput.addEventListener("input", ()=>{
     phoneInput.value = phoneInput.value.replace(/\D/g,"");
@@ -1126,6 +1167,13 @@
   btnStartVerify.addEventListener("click", ()=>{
     verifyCodeBox.style.display = "flex";
   });
+
+  if(btnResendCode){
+    btnResendCode.addEventListener("click", ()=>{
+      console.log("Code erneut senden angeklickt");
+      // Hier könnte später ein erneuter SMS-Versand eingebunden werden
+    });
+  }
 
   // Matching-Animation in Schritt 4
   function runMatchingAnimation(){
