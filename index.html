@@ -472,7 +472,7 @@
       max-width:140px;
     }
 
-    /* Zusammenfassung nach dem Absenden (für neues Fenster) */
+    /* Zusammenfassung nach dem Absenden (unbenutzt, aber ok) */
     .summary-message{
       margin-top:1.5rem;
       padding:1rem 1.1rem;
@@ -847,13 +847,16 @@
       <button class="btn btn-primary" id="btnNext">Weiter</button>
     </div>
 
-    <!-- Erfolg (wird hier NICHT mehr verwendet, bleibt aber im Markup) -->
+    <!-- Erfolg – wird nach dem Absenden angezeigt -->
     <div id="success" style="display:none;">
       <div class="success-message">
         <h2>Vielen Dank für Ihre Anfrage!</h2>
         <p class="hint">
           Ihre Daten wurden gespeichert. In der Regel erhalten Sie innerhalb von 24&nbsp;Stunden erste Angebote
           von Umzugsunternehmen aus Ihrer Region.
+        </p>
+        <p class="hint" style="margin-top:0.75rem;">
+          Datenschutz: Ihre Daten werden ausschließlich zur Vermittlung von Umzugsangeboten verwendet und nicht an Dritte weitergegeben.
         </p>
       </div>
     </div>
@@ -1045,12 +1048,15 @@
       collectData();
       console.log("Formular-Daten:", formData);
       document.querySelector("main.card").scrollIntoView({behavior:"smooth"});
+
+      // Formular-Navigation deaktivieren
       btnBack.disabled = true;
       btnNext.disabled = true;
-      // Erfolg nicht auf dieser Seite anzeigen
-      if(successBox){ successBox.style.display = "none"; }
-      // Stattdessen separates Fenster mit Zusammenfassung
-      openSummaryWindow();
+
+      // Erfolgsnachricht auf derselben Seite anzeigen
+      if(successBox){
+        successBox.style.display = "block";
+      }
     }
   });
 
@@ -1139,168 +1145,6 @@
         showStep(5);
       }
     },4000);
-  }
-
-  // Helper für Zusammenfassung
-  function escapeHtml(str){
-    if(!str) return "";
-    return str
-      .replace(/&/g,"&amp;")
-      .replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;")
-      .replace(/"/g,"&quot;")
-      .replace(/'/g,"&#039;");
-  }
-
-  function createSummaryHtml(){
-    const route = `${escapeHtml(formData.move_from_zip || "")} ${escapeHtml(formData.move_from_city || "")} → ${escapeHtml(formData.move_to_zip || "")} ${escapeHtml(formData.move_to_city || "")}`.trim();
-
-    let moveTypeText = "";
-    if(formData.move_type === "privat") moveTypeText = "Privatumzug";
-    if(formData.move_type === "geschaeft") moveTypeText = "Geschäftsumzug";
-
-    let intlText = "";
-    if(typeof formData.is_international !== "undefined"){
-      intlText = formData.is_international ? "Ins Ausland" : "Innerhalb Deutschlands";
-    }
-
-    let scopeText = "";
-    if(formData.move_scope === "ganzer_haushalt") scopeText = "Ganzer Haushalt";
-    if(formData.move_scope === "halber_haushalt") scopeText = "Halber Haushalt";
-    if(formData.move_scope === "teilumzug") scopeText = "Nur Kartons";
-
-    let dateText = "";
-    if(formData.move_date_type === "fest" && formData.move_date){
-      dateText = `Festes Datum: ${escapeHtml(formData.move_date)}`;
-    }else if(formData.move_date_type === "zeitraum" && formData.move_date_from && formData.move_date_to){
-      dateText = `Zeitraum: ${escapeHtml(formData.move_date_from)} – ${escapeHtml(formData.move_date_to)}`;
-    }
-
-    return `
-      <div class="summary-message">
-        <h3>Ihre Anfrage im Überblick</h3>
-        <div class="summary-section">
-          <p class="summary-line"><strong>Route:</strong> ${route}</p>
-          <p class="summary-line"><strong>Art des Umzugs:</strong> ${escapeHtml(moveTypeText)}</p>
-          <p class="summary-line"><strong>Umzug:</strong> ${escapeHtml(intlText)}</p>
-          <p class="summary-line"><strong>Umfang:</strong> ${escapeHtml(scopeText)}</p>
-          ${formData.move_notes ? `<p class="summary-line"><strong>Infos zum Umzug:</strong> ${escapeHtml(formData.move_notes)}</p>` : ""}
-        </div>
-        <div class="summary-section">
-          <p class="summary-line"><strong>Umzugstermin:</strong> ${escapeHtml(dateText)}</p>
-        </div>
-        <div class="summary-section">
-          <p class="summary-line"><strong>Ansprechpartner:</strong> ${escapeHtml(formData.customer_name || "")}</p>
-          <p class="summary-line"><strong>Telefon:</strong> ${escapeHtml(formData.phone || "")}</p>
-          <p class="summary-line"><strong>E-Mail:</strong> ${escapeHtml(formData.email || "")}</p>
-        </div>
-      </div>
-    `;
-  }
-
-  // Neues Fenster nach dem Absenden öffnen
-  function openSummaryWindow(){
-    const summaryHtml = createSummaryHtml();
-    const win = window.open("", "umzugsanfrage_zusammenfassung", "width=720,height=720");
-
-    if(!win) return;
-
-    win.document.write(`<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <title>Ihre Umzugsanfrage</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --blue-600:#2563eb;
-      --blue-700:#1d4ed8;
-      --gray-50:#f9fafb;
-      --gray-100:#f3f4f6;
-      --gray-200:#e5e7eb;
-      --gray-500:#6b7280;
-    }
-    *{box-sizing:border-box;}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:linear-gradient(135deg,#e0f2fe,#eef2ff);
-      color:#111827;
-      min-height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:flex-start;
-    }
-    main{
-      width:100%;
-      max-width:640px;
-      background:#fff;
-      border-radius:1.5rem;
-      padding:1.8rem 1.5rem 1.8rem;
-      margin:1.5rem;
-      box-shadow:0 20px 45px rgba(15,23,42,0.18);
-    }
-    h1{
-      font-size:1.4rem;
-      margin:0 0 0.25rem;
-    }
-    p.subtitle{
-      margin:0 0 1rem;
-      font-size:0.9rem;
-      color:var(--gray-500);
-    }
-    .summary-message{
-      margin-top:1rem;
-      padding:1rem 1.1rem;
-      border-radius:1rem;
-      background:#f3f4f6;
-      border:1px solid var(--gray-200);
-      font-size:0.9rem;
-    }
-    .summary-message h3{
-      margin:0 0 0.5rem;
-      font-size:1rem;
-    }
-    .summary-line{
-      margin:0.15rem 0;
-    }
-    .summary-section{
-      margin-top:0.5rem;
-    }
-    .footer{
-      margin-top:1.4rem;
-      display:flex;
-      justify-content:flex-end;
-    }
-    .btn-primary{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding:0.65rem 1.5rem;
-      border-radius:999px;
-      border:none;
-      cursor:pointer;
-      font-size:0.95rem;
-      font-weight:500;
-      background:linear-gradient(135deg,var(--blue-600),var(--blue-700));
-      color:#fff;
-    }
-  </style>
-</head>
-<body>
-  <main>
-    <h1>Vielen Dank für Ihre Anfrage</h1>
-    <p class="subtitle">Nachfolgend sehen Sie Ihre angegebenen Umzugsdaten im Überblick.</p>
-    ${summaryHtml}
-    <div class="footer">
-      <button class="btn-primary" onclick="if(window.opener){window.opener.location.reload();} window.close();">
-        Neu vergleichen
-      </button>
-    </div>
-  </main>
-</body>
-</html>`);
-    win.document.close();
   }
 
   // Initial
