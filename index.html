@@ -353,7 +353,7 @@
   <header class="hero">
     <div class="hero-badge">
       <span>🚚</span>
-      <span>Umzugskostencheck – Umzugsangebote vergleichen</span>
+      <span>Umzugkostencheck – Umzugsangebote vergleichen</span>
     </div>
     <h1 class="hero-title">Umzugskosten vergleichen & Angebote erhalten</h1>
     <p class="hero-sub">
@@ -362,7 +362,7 @@
     <div class="hero-stats">
       <div class="hero-stat">
         <div class="hero-stat-dot">👥</div>
-        <span>Über 500 geprüfte Partner</span>
+        <span>Deutschlandweit</span>
       </div>
       <div class="hero-stat">
         <div class="hero-stat-dot">🏆</div>
@@ -430,53 +430,78 @@
             </div>
           </div>
         </div>
+        
+<!-- STEP 2: WOHNUNG -->
+<div class="form-step" data-step="2">
+  <div style="text-align:center;margin-bottom:1.2rem;">
+    <h2 style="margin:0 0 0.4rem;font-size:1.3rem;font-weight:600;">
+      Details zu den Wohnungen
+    </h2>
+    <p class="hint">
+      Helfen Sie den Umzugsfirmen, den Aufwand besser einzuschätzen.
+    </p>
+  </div>
 
-        <!-- STEP 2: WOHNUNG (alles optional) -->
-        <div class="form-step" data-step="2">
-          <div style="text-align:center;margin-bottom:1.2rem;">
-            <h2 style="margin:0 0 0.4rem;font-size:1.3rem;font-weight:600;">
-              Details zur Wohnung (optional)
-            </h2>
-            <p class="hint">
-              Diese Angaben helfen, den Aufwand besser einzuschätzen – sind aber freiwillig.
-            </p>
-          </div>
+  <div class="grid grid-2" style="gap:1.2rem;">
+    <!-- Wohnung Auszug -->
+    <div style="padding:1.1rem;border-radius:1.1rem;border:1px solid #e5e7eb;background:linear-gradient(135deg,#f9fafb,#ffffff);">
+      <h3 style="font-weight:600;color:#111827;display:flex;align-items:center;gap:0.4rem;margin:0 0 0.85rem;">
+        <span style="width:8px;height:8px;border-radius:999px;background:#ef4444;"></span>
+        Wohnung Auszug
+      </h3>
 
-          <div class="grid grid-2">
-            <div>
-              <label for="living_space">Wohnfläche (m²)</label>
-              <input id="living_space" name="living_space" type="number" />
-            </div>
-            <div>
-              <label for="rooms">Anzahl Zimmer</label>
-              <input id="rooms" name="rooms" type="number" />
-            </div>
-            <div>
-              <label for="floor_from">Etage Auszug</label>
-              <input id="floor_from" name="floor_from" type="number" />
-            </div>
-            <div>
-              <label for="floor_to">Etage Einzug</label>
-              <input id="floor_to" name="floor_to" type="number" />
-            </div>
-          </div>
+      <div style="margin-bottom:0.7rem;">
+        <label for="living_space_from">Wohnfläche (m²)</label>
+        <input id="living_space_from" name="living_space_from" type="number" />
+      </div>
+      <div style="margin-bottom:0.7rem;">
+        <label for="rooms_from">Anzahl Zimmer</label>
+        <input id="rooms_from" name="rooms_from" type="number" />
+      </div>
+      <div style="margin-bottom:0.9rem;">
+        <label for="floor_from">Etage</label>
+        <input id="floor_from" name="floor_from" type="number" />
+      </div>
 
-          <div class="grid grid-2" style="margin-top:1rem;">
-            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.7rem 0.9rem;border-radius:0.9rem;border:1px solid #e5e7eb;">
-              <input type="checkbox" id="has_elevator_from" />
-              <label for="has_elevator_from" style="font-size:0.9rem;cursor:pointer;">
-                Aufzug vorhanden am Auszugsort
-              </label>
-            </div>
-            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.7rem 0.9rem;border-radius:0.9rem;border:1px solid #e5e7eb;">
-              <input type="checkbox" id="has_elevator_to" />
-              <label for="has_elevator_to" style="font-size:0.9rem;cursor:pointer;">
-                Aufzug vorhanden am Einzugsort
-              </label>
-            </div>
-          </div>
-        </div>
+      <div style="display:flex;align-items:center;gap:0.6rem;">
+        <input type="checkbox" id="has_elevator_from" />
+        <label for="has_elevator_from" style="font-size:0.9rem;cursor:pointer;">
+          Aufzug vorhanden
+        </label>
+      </div>
+    </div>
 
+    <!-- Wohnung Einzug -->
+    <div style="padding:1.1rem;border-radius:1.1rem;border:1px solid #e5e7eb;background:linear-gradient(135deg,#f9fafb,#ffffff);">
+      <h3 style="font-weight:600;color:#111827;display:flex;align-items:center;gap:0.4rem;margin:0 0 0.85rem;">
+        <span style="width:8px;height:8px;border-radius:999px;background:#22c55e;"></span>
+        Wohnung Einzug
+      </h3>
+
+      <div style="margin-bottom:0.7rem;">
+        <label for="living_space_to">Wohnfläche (m²)</label>
+        <input id="living_space_to" name="living_space_to" type="number" />
+      </div>
+      <div style="margin-bottom:0.7rem;">
+        <label for="rooms_to">Anzahl Zimmer</label>
+        <input id="rooms_to" name="rooms_to" type="number" />
+      </div>
+      <div style="margin-bottom:0.9rem;">
+        <label for="floor_to">Etage</label>
+        <input id="floor_to" name="floor_to" type="number" />
+      </div>
+
+      <div style="display:flex;align-items:center;gap:0.6rem;">
+        <input type="checkbox" id="has_elevator_to" />
+        <label for="has_elevator_to" style="font-size:0.9rem;cursor:pointer;">
+          Aufzug vorhanden
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
         <!-- STEP 3: UMZUGSDETAILS -->
         <div class="form-step" data-step="3">
           <div style="text-align:center;margin-bottom:1.2rem;">
