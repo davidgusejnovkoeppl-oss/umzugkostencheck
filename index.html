@@ -245,8 +245,8 @@
 
     /* Checkbox Größe */
     input[type="checkbox"]{
-      width:22px;
-      height:22px;
+      width:18px;
+      height:18px;
       margin:0;
       accent-color:var(--blue-600);
     }
@@ -415,7 +415,7 @@
     }
 
     .error{
-      color:#b91c1c;
+      color:var(--gray-500);
       font-size:0.8rem;
       margin-top:0.15rem;
     }
@@ -471,28 +471,48 @@
     .verify-code input{
       max-width:140px;
     }
+
+    /* Zusammenfassung nach dem Absenden */
+    .summary-message{
+      margin-top:1.5rem;
+      padding:1rem 1.1rem;
+      border-radius:1rem;
+      background:#f3f4f6;
+      border:1px solid var(--gray-200);
+      font-size:0.9rem;
+    }
+    .summary-message h3{
+      margin:0 0 0.5rem;
+      font-size:1rem;
+    }
+    .summary-line{
+      margin:0.15rem 0;
+    }
+    .summary-section{
+      margin-top:0.5rem;
+    }
   </style>
 </head>
 <body>
 <div class="page">
   <header class="hero">
     <div class="container">
-      <div class="badge">🚚✅ Kostenlose & unverbindliche Umzugsanfrage</div>
+      <div class="badge">Kostenlose &amp; unverbindliche Umzugsanfrage</div>
       <h1 class="hero-title">Umzugskosten vergleichen</h1>
-      <p class="hero-subtitle">In wenigen Schritten 🧩 Angebote von qualifizierten Umzugsunternehmen erhalten.</p>
+      <p class="hero-subtitle">In wenigen Schritten Angebote von qualifizierten Umzugsunternehmen erhalten.</p>
 
       <div class="trust-row">
         <div class="trust-item">
           <div class="trust-dot"></div>
-          <span>🇩🇪 Deutschlandweit</span>
+          <span>Deutschlandweit</span>
         </div>
         <div class="trust-item">
           <div class="trust-dot"></div>
-          <span>🏆 Qualifizierte Unternehmen</span>
+          <span>Qualifizierte Unternehmen</span>
         </div>
         <div class="trust-item">
           <div class="trust-dot"></div>
-          <span>💶 100&nbsp;% kostenlos &amp; unverbindlich</span>
+          <span>100% kostenlos</span>
         </div>
       </div>
     </div>
@@ -529,8 +549,8 @@
 
     <!-- STEP 1: ROUTE -->
     <div class="form-step active" data-step="1">
-      <h2 class="step-title">Von wo nach wo ziehen Sie? 📍</h2>
-      <p class="step-subtitle">Geben Sie Ihre Umzugsroute an. Die Postleitzahl reicht aus.</p>
+      <h2 class="step-title">Von wo nach wo ziehen Sie?</h2>
+      <p class="step-subtitle">Geben Sie Ihre Umzugsroute an.</p>
 
       <div class="grid-2">
         <!-- Auszug -->
@@ -571,7 +591,7 @@
 
     <!-- STEP 2: WOHNUNG -->
     <div class="form-step" data-step="2">
-      <h2 class="step-title">Details zu den Wohnungen 🏠</h2>
+      <h2 class="step-title">Details zu den Wohnungen</h2>
       <p class="step-subtitle">Diese Angaben sind freiwillig – helfen aber, den Aufwand besser einzuschätzen.</p>
 
       <div class="grid-2">
@@ -661,7 +681,7 @@
 
     <!-- STEP 3: ART DES UMZUGS -->
     <div class="form-step" data-step="3">
-      <h2 class="step-title">Art des Umzugs 📦</h2>
+      <h2 class="step-title">Art des Umzugs</h2>
       <p class="step-subtitle">Damit wir passende Angebote finden können.</p>
 
       <div style="margin-bottom:1.1rem;font-size:0.9rem;font-weight:600;">Privat oder geschäftlich?</div>
@@ -702,6 +722,11 @@
           <div class="choice-title">Nur Kartons</div>
           <div class="choice-sub">Wenige Gegenstände</div>
         </div>
+      </div>
+
+      <div style="margin-top:1.2rem;">
+        <label for="move_notes">Optionale Infos zum Umzug (optional)</label>
+        <textarea id="move_notes" placeholder="z.B. empfindliche Möbel, Halteverbotszone, gewünschte Zusatzleistungen …"></textarea>
       </div>
 
       <div class="error" id="err_step3" style="margin-top:0.4rem;"></div>
@@ -747,7 +772,7 @@
 
     <!-- STEP 5: KONTAKT -->
     <div class="form-step" data-step="5">
-      <h2 class="step-title">Ihre Kontaktdaten & Umzugstermin 📅</h2>
+      <h2 class="step-title">Ihre Kontaktdaten &amp; Umzugstermin</h2>
       <p class="step-subtitle">Damit die Umzugsfirmen Ihnen passende Angebote zusenden können.</p>
 
       <div class="grid-2">
@@ -811,11 +836,6 @@
         </div>
       </div>
 
-      <div style="margin-top:1rem;">
-        <label for="additional_notes">Zusätzliche Anmerkungen (optional)</label>
-        <textarea id="additional_notes" placeholder="z.B. besondere Möbel, gewünschte Services, Parkmöglichkeiten …"></textarea>
-      </div>
-
       <p class="hint" style="margin-top:0.85rem;">
         Mit dem Absenden Ihrer Anfrage stimmen Sie zu, dass ausgewählte Umzugsunternehmen Sie
         telefonisch oder per E-Mail zur Angebotserstellung kontaktieren dürfen.
@@ -837,6 +857,11 @@
           von Umzugsunternehmen aus Ihrer Region.
         </p>
       </div>
+    </div>
+
+    <!-- Sichtbare "Nachricht" nach dem Absenden -->
+    <div id="summaryMessage" class="summary-message" style="display:none;">
+      <!-- Inhalt wird per JS gefüllt -->
     </div>
   </main>
 </div>
@@ -909,7 +934,8 @@
     formData.floor_to = document.getElementById("floor_to").value;
     formData.has_elevator_to = document.getElementById("has_elevator_to").checked;
 
-    // Step 3 (schon über choice-cards gesetzt)
+    // Step 3 (Choice-Cards + optionales Textfeld)
+    formData.move_notes = document.getElementById("move_notes")?.value.trim() || "";
 
     // Step 5
     formData.customer_name = document.getElementById("customer_name").value.trim();
@@ -920,7 +946,6 @@
     formData.move_date = document.getElementById("move_date").value;
     formData.move_date_from = document.getElementById("move_date_from").value;
     formData.move_date_to = document.getElementById("move_date_to").value;
-    formData.additional_notes = document.getElementById("additional_notes").value.trim();
     formData.verify_code = document.getElementById("verify_code")?.value.trim() || "";
   }
 
@@ -935,34 +960,41 @@
 
     if(currentStep === 1){
       if(!formData.move_from_zip){
-        document.getElementById("err_from_zip").textContent = "Bitte Postleitzahl eingeben.";
+        const el = document.getElementById("err_from_zip");
+        if(el) el.textContent = "Bitte Postleitzahl eingeben.";
         valid = false;
       }
       if(!formData.move_to_zip){
-        document.getElementById("err_to_zip").textContent = "Bitte Postleitzahl eingeben.";
+        const el2 = document.getElementById("err_to_zip");
+        if(el2) el2.textContent = "Bitte Postleitzahl eingeben.";
         valid = false;
       }
     }
 
     if(currentStep === 3){
       if(!formData.move_type || typeof formData.is_international === "undefined" || !formData.move_scope){
-        document.getElementById("err_step3").textContent =
-          "Bitte wählen Sie jeweils eine Option aus allen Bereichen.";
+        const el3 = document.getElementById("err_step3");
+        if(el3){
+          el3.textContent = "Bitte wählen Sie jeweils eine Option aus allen Bereichen.";
+        }
         valid = false;
       }
     }
 
     if(currentStep === 5){
       if(!formData.customer_name){
-        document.getElementById("err_name").textContent = "Bitte Namen eingeben.";
+        const el4 = document.getElementById("err_name");
+        if(el4) el4.textContent = "Bitte Namen eingeben.";
         valid = false;
       }
       if(!formData.phone){
-        document.getElementById("err_phone").textContent = "Bitte Telefonnummer eingeben.";
+        const el5 = document.getElementById("err_phone");
+        if(el5) el5.textContent = "Bitte Telefonnummer eingeben.";
         valid = false;
       }
       if(!formData.email){
-        document.getElementById("err_email").textContent = "Bitte E-Mail eingeben.";
+        const el6 = document.getElementById("err_email");
+        if(el6) el6.textContent = "Bitte E-Mail eingeben.";
         valid = false;
       }
 
@@ -989,8 +1021,10 @@
       }
 
       if(!hasDateInfo){
-        document.getElementById("err_date").textContent =
-          dateError || "Bitte Umzugstermin angeben.";
+        const el7 = document.getElementById("err_date");
+        if(el7){
+          el7.textContent = dateError || "Bitte Umzugstermin angeben.";
+        }
         valid = false;
       }
     }
@@ -1013,13 +1047,20 @@
     if(currentStep < TOTAL_STEPS){
       showStep(currentStep+1);
     }else{
-      // Submit (hier könntest du später API/Backend anbinden)
+      // Submit (hier später API/Backend anbinden)
       collectData();
       console.log("Formular-Daten:", formData);
       document.querySelector("main.card").scrollIntoView({behavior:"smooth"});
       successBox.style.display = "block";
       btnBack.disabled = true;
       btnNext.disabled = true;
+
+      // Zusammenfassung als einzelne „Nachricht“ anzeigen
+      const summaryEl = document.getElementById("summaryMessage");
+      if(summaryEl){
+        summaryEl.style.display = "block";
+        summaryEl.innerHTML = createSummaryHtml();
+      }
     }
   });
 
@@ -1108,6 +1149,61 @@
         showStep(5);
       }
     },4000);
+  }
+
+  // Kleine Helper für die Zusammenfassung
+  function escapeHtml(str){
+    if(!str) return "";
+    return str
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#039;");
+  }
+
+  function createSummaryHtml(){
+    const route = `${escapeHtml(formData.move_from_zip || "")} ${escapeHtml(formData.move_from_city || "")} → ${escapeHtml(formData.move_to_zip || "")} ${escapeHtml(formData.move_to_city || "")}`.trim();
+
+    let moveTypeText = "";
+    if(formData.move_type === "privat") moveTypeText = "Privatumzug";
+    if(formData.move_type === "geschaeft") moveTypeText = "Geschäftsumzug";
+
+    let intlText = "";
+    if(typeof formData.is_international !== "undefined"){
+      intlText = formData.is_international ? "Ins Ausland" : "Innerhalb Deutschlands";
+    }
+
+    let scopeText = "";
+    if(formData.move_scope === "ganzer_haushalt") scopeText = "Ganzer Haushalt";
+    if(formData.move_scope === "halber_haushalt") scopeText = "Halber Haushalt";
+    if(formData.move_scope === "teilumzug") scopeText = "Nur Kartons";
+
+    let dateText = "";
+    if(formData.move_date_type === "fest" && formData.move_date){
+      dateText = `Festes Datum: ${escapeHtml(formData.move_date)}`;
+    }else if(formData.move_date_type === "zeitraum" && formData.move_date_from && formData.move_date_to){
+      dateText = `Zeitraum: ${escapeHtml(formData.move_date_from)} – ${escapeHtml(formData.move_date_to)}`;
+    }
+
+    return `
+      <h3>Ihre Anfrage im Überblick</h3>
+      <div class="summary-section">
+        <p class="summary-line"><strong>Route:</strong> ${route}</p>
+        <p class="summary-line"><strong>Art des Umzugs:</strong> ${escapeHtml(moveTypeText)}</p>
+        <p class="summary-line"><strong>Umzug:</strong> ${escapeHtml(intlText)}</p>
+        <p class="summary-line"><strong>Umfang:</strong> ${escapeHtml(scopeText)}</p>
+        ${formData.move_notes ? `<p class="summary-line"><strong>Infos zum Umzug:</strong> ${escapeHtml(formData.move_notes)}</p>` : ""}
+      </div>
+      <div class="summary-section">
+        <p class="summary-line"><strong>Umzugstermin:</strong> ${escapeHtml(dateText)}</p>
+      </div>
+      <div class="summary-section">
+        <p class="summary-line"><strong>Ansprechpartner:</strong> ${escapeHtml(formData.customer_name || "")}</p>
+        <p class="summary-line"><strong>Telefon:</strong> ${escapeHtml(formData.phone || "")}</p>
+        <p class="summary-line"><strong>E-Mail:</strong> ${escapeHtml(formData.email || "")}</p>
+      </div>
+    `;
   }
 
   // Initial
