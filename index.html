@@ -8,6 +8,7 @@
     :root {
       --blue-50:#eff6ff;
       --blue-100:#dbeafe;
+      --blue-400:#60a5fa;
       --blue-500:#3b82f6;
       --blue-600:#2563eb;
       --blue-700:#1d4ed8;
@@ -15,9 +16,11 @@
       --gray-100:#f3f4f6;
       --gray-200:#e5e7eb;
       --gray-300:#d1d5db;
+      --gray-400:#9ca3af;
       --gray-500:#6b7280;
       --gray-700:#374151;
       --green-500:#22c55e;
+      --green-600:#16a34a;
       --purple-500:#a855f7;
     }
     *{box-sizing:border-box;}
@@ -41,6 +44,7 @@
       width:100%;
       max-width:1120px;
       margin:0 auto;
+      text-align:center;
     }
     .badge{
       display:inline-flex;
@@ -56,22 +60,24 @@
       font-size:2.3rem;
       line-height:1.1;
       font-weight:700;
-      margin:1rem 0 0.5rem;
+      margin:1rem auto 0.5rem;
     }
     .hero-subtitle{
       font-size:1.1rem;
       opacity:0.95;
       max-width:32rem;
+      margin:0 auto;
     }
     .trust-row{
       margin-top:1.75rem;
       display:flex;
       flex-wrap:wrap;
       gap:0.75rem;
+      justify-content:center;
     }
     .trust-item{
       flex:1 1 160px;
-      min-width:0;
+      max-width:220px;
       background:rgba(15,23,42,0.25);
       border-radius:0.9rem;
       padding:0.65rem 0.9rem;
@@ -79,6 +85,7 @@
       display:flex;
       align-items:center;
       gap:0.5rem;
+      justify-content:center;
       white-space:nowrap;
     }
     .trust-dot{
@@ -138,15 +145,18 @@
       color:var(--gray-500);
       font-weight:500;
     }
-    .step-item.completed .step-circle,
     .step-item.current .step-circle{
       background:linear-gradient(135deg,var(--blue-600),var(--blue-700));
       border-color:transparent;
       color:#fff;
       box-shadow:0 0 0 4px rgba(129,140,248,0.35);
-    }
-    .step-item.current .step-circle{
       transform:scale(1.05);
+    }
+    .step-item.completed .step-circle{
+      background:linear-gradient(135deg,var(--green-500),var(--green-600));
+      border-color:transparent;
+      color:#fff;
+      box-shadow:0 0 0 4px rgba(34,197,94,0.35);
     }
     .step-item.completed .step-circle::before{
       content:"✓";
@@ -158,6 +168,9 @@
     .step-item.current .step-label{
       color:var(--blue-700);
     }
+    .step-item.completed .step-label{
+      color:var(--green-600);
+    }
     .step-line{
       position:absolute;
       top:22px;
@@ -167,11 +180,8 @@
       background:var(--gray-200);
       z-index:0;
     }
-    .step-item.completed ~ .step-item .step-line{
-      background:var(--gray-200);
-    }
     .step-item.completed .step-line{
-      background:linear-gradient(90deg,var(--blue-600),var(--blue-700));
+      background:linear-gradient(90deg,var(--green-500),var(--green-600));
     }
 
     /* Form layout */
@@ -235,8 +245,8 @@
 
     /* Checkbox Größe */
     input[type="checkbox"]{
-      width:20px;
-      height:20px;
+      width:18px;
+      height:18px;
       margin:0;
       accent-color:var(--blue-600);
     }
@@ -341,6 +351,26 @@
       }
     }
 
+    /* Loading in step 4 */
+    .matching-loading{
+      text-align:center;
+      padding:1.5rem 0 0.5rem;
+      color:var(--gray-600);
+      font-size:0.95rem;
+    }
+    .spinner{
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      border:4px solid var(--blue-100);
+      border-top-color:var(--blue-600);
+      margin:0.5rem auto 0.75rem;
+      animation:spin 1s linear infinite;
+    }
+    @keyframes spin{
+      to{transform:rotate(360deg);}
+    }
+
     /* Footer / nav */
     .nav-row{
       display:flex;
@@ -385,7 +415,7 @@
     }
 
     .error{
-      color:#b91c1c;
+      color:var(--gray-500);
       font-size:0.8rem;
       margin-top:0.15rem;
     }
@@ -396,26 +426,116 @@
 
     .success-message{
       text-align:center;
-      padding:2rem 1rem 0.5rem;
+      padding:2.4rem 1rem 2.6rem;
     }
     .success-message h2{
       font-size:1.5rem;
       margin-bottom:0.75rem;
     }
 
-    /* Footer links (Impressum / Datenschutz) */
-    .legal-footer{
-      text-align:center;
+    .success-circle{
+      width:80px;
+      height:80px;
+      border-radius:999px;
+      background:radial-gradient(circle at center,#22c55e,#16a34a);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:0 auto 1.2rem;
+      box-shadow:0 16px 40px rgba(34,197,94,0.45);
+    }
+    .success-circle span{
+      color:#fff;
+      font-size:2rem;
+      font-weight:700;
+    }
+
+    /* SMS-Box */
+    .verify-box{
+      margin-top:0.8rem;
+      border-radius:1rem;
+      border:1px solid #bbf7d0;
+      background:#ecfdf5;
+      padding:0.75rem 0.9rem;
+      font-size:0.85rem;
+    }
+    .verify-header{
+      display:flex;
+      align-items:center;
+      gap:0.5rem;
+      font-weight:600;
+      margin-bottom:0.35rem;
+    }
+    .verify-btn{
+      margin-top:0.5rem;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:0.35rem 0.9rem;
+      border-radius:999px;
+      border:none;
+      cursor:pointer;
       font-size:0.8rem;
-      color:#6b7280;
-      padding:0 1rem 2rem;
+      background:linear-gradient(135deg,var(--green-500),var(--green-600));
+      color:#fff;
     }
-    .legal-footer a{
-      color:#6b7280;
+    .verify-code{
+      margin-top:0.6rem;
+      display:flex;
+      flex-direction:column;
+      gap:0.35rem;
+    }
+    .verify-code input{
+      max-width:140px;
+    }
+    .verify-resend{
+      margin-top:0.25rem;
+      background:none;
+      border:none;
+      padding:0;
+      font-size:0.8rem;
+      color:var(--blue-600);
+      text-decoration:underline;
+      cursor:pointer;
+      align-self:flex-start;
+    }
+
+    /* (unbenutzte) Zusammenfassungskarte – kann bleiben */
+    .summary-message{
+      margin-top:1.5rem;
+      padding:1rem 1.1rem;
+      border-radius:1rem;
+      background:#f3f4f6;
+      border:1px solid var(--gray-200);
+      font-size:0.9rem;
+    }
+    .summary-message h3{
+      margin:0 0 0.5rem;
+      font-size:1rem;
+    }
+    .summary-line{
+      margin:0.15rem 0;
+    }
+    .summary-section{
+      margin-top:0.5rem;
+    }
+
+    /* KLEINER FOOTER */
+    .site-footer{
+      margin-top:auto;
+      padding:1rem 1.25rem 1.5rem;
+      font-size:0.8rem;
+      color:var(--gray-500);
+    }
+    .site-footer .container{
+      text-align:center;
+    }
+    .site-footer a{
+      color:inherit;
       text-decoration:none;
-      margin:0 0.75rem;
+      margin:0 0.5rem;
     }
-    .legal-footer a:hover{
+    .site-footer a:hover{
       text-decoration:underline;
     }
   </style>
@@ -424,9 +544,11 @@
 <div class="page">
   <header class="hero">
     <div class="container">
-      <div class="badge">✅ Kostenlose & unverbindliche Umzugsanfrage</div>
+      <div class="badge">Kostenlose &amp; unverbindliche Umzugsanfrage</div>
       <h1 class="hero-title">Umzugskosten vergleichen</h1>
-      <p class="hero-subtitle">In wenigen Schritten Angebote von qualifizierten Umzugsunternehmen erhalten.</p>
+      <p class="hero-subtitle">
+        In wenigen Schritten kostenlos und unverbindlich Angebote von qualifizierten Umzugsunternehmen erhalten.
+      </p>
 
       <div class="trust-row">
         <div class="trust-item">
@@ -439,7 +561,7 @@
         </div>
         <div class="trust-item">
           <div class="trust-dot"></div>
-          <span>100&nbsp;% kostenlos &amp; unverbindlich</span>
+          <span>100% kostenlos</span>
         </div>
       </div>
     </div>
@@ -477,14 +599,14 @@
     <!-- STEP 1: ROUTE -->
     <div class="form-step active" data-step="1">
       <h2 class="step-title">Von wo nach wo ziehen Sie?</h2>
-      <p class="step-subtitle">Geben Sie Ihre Umzugsroute an. Die Postleitzahl reicht aus.</p>
+      <p class="step-subtitle">Geben Sie Ihre Umzugsroute an.</p>
 
       <div class="grid-2">
         <!-- Auszug -->
         <div class="pill-card">
           <h3 style="margin:0 0 0.7rem;font-size:0.95rem;font-weight:600;display:flex;align-items:center;gap:0.4rem;">
             <span style="width:8px;height:8px;border-radius:999px;background:#ef4444;"></span>
-            Auszugsort
+            Wohnung Auszug
           </h3>
           <div style="margin-bottom:0.6rem;">
             <label for="move_from_zip">Postleitzahl*</label>
@@ -501,7 +623,7 @@
         <div class="pill-card">
           <h3 style="margin:0 0 0.7rem;font-size:0.95rem;font-weight:600;display:flex;align-items:center;gap:0.4rem;">
             <span style="width:8px;height:8px;border-radius:999px;background:#22c55e;"></span>
-            Einzugsort
+            Wohnung Einzug
           </h3>
           <div style="margin-bottom:0.6rem;">
             <label for="move_to_zip">Postleitzahl*</label>
@@ -651,42 +773,56 @@
         </div>
       </div>
 
+      <div style="margin-top:1.2rem;">
+        <label for="move_notes">Optionale Infos zum Umzug (optional)</label>
+        <textarea id="move_notes" placeholder="z.B. empfindliche Möbel, Halteverbotszone, gewünschte Zusatzleistungen …"></textarea>
+      </div>
+
       <div class="error" id="err_step3" style="margin-top:0.4rem;"></div>
     </div>
 
     <!-- STEP 4: MATCHING -->
     <div class="form-step" data-step="4">
-      <h2 class="step-title">Unternehmen in Ihrer Nähe gefunden! ✨</h2>
-      <p class="step-subtitle">Wir haben passende Umzugspartner in Ihrer Region identifiziert.</p>
-
-      <div class="matching-circle">
-        <span>✓</span>
+      <!-- Loading-Phase -->
+      <div id="matchingLoading" class="matching-loading">
+        <div class="spinner"></div>
+        <div>Wir suchen passende Umzugsunternehmen in Ihrer Nähe …</div>
       </div>
 
-      <div class="matching-stats">
-        <div class="matching-card">
-          <div class="matching-num">4–6</div>
-          <div class="matching-label">Umzugsfirmen</div>
-        </div>
-        <div class="matching-card">
-          <div class="matching-num">100&nbsp;%</div>
-          <div class="matching-label">Geprüft</div>
-        </div>
-        <div class="matching-card">
-          <div class="matching-num">24h</div>
-          <div class="matching-label">Antwort</div>
-        </div>
-      </div>
+      <!-- Ergebnis -->
+      <div id="matchingResult" style="display:none;">
+        <h2 class="step-title">Unternehmen in Ihrer Nähe gefunden!</h2>
+        <p class="step-subtitle">Wir haben passende Umzugsunternehmen in Ihrer Region identifiziert.</p>
 
-      <div class="matching-hint">
-        Fast geschafft! Nur noch Ihre Kontaktdaten, damit die passenden Unternehmen Sie erreichen können.
+        <div class="matching-circle">
+          <span>✓</span>
+        </div>
+
+        <div class="matching-stats">
+          <div class="matching-card">
+            <div class="matching-num">4–6</div>
+            <div class="matching-label">Umzugsfirmen</div>
+          </div>
+          <div class="matching-card">
+            <div class="matching-num">100&nbsp;%</div>
+            <div class="matching-label">Geprüft</div>
+          </div>
+          <div class="matching-card">
+            <div class="matching-num">24h</div>
+            <div class="matching-label">Antwort</div>
+          </div>
+        </div>
+
+        <div class="matching-hint">
+          Fast geschafft! Nur noch Ihre Kontaktdaten, damit die passenden Unternehmen Sie erreichen können.
+        </div>
       </div>
     </div>
 
     <!-- STEP 5: KONTAKT -->
     <div class="form-step" data-step="5">
-      <h2 class="step-title">Kontakt & Umzugstermin</h2>
-      <p class="step-subtitle">Damit die Umzugsfirmen Ihnen Angebote zusenden können.</p>
+      <h2 class="step-title">Ihre Kontaktdaten &amp; Umzugstermin</h2>
+      <p class="step-subtitle">Damit die Umzugsfirmen Ihnen passende Angebote zusenden können.</p>
 
       <div class="grid-2">
         <div>
@@ -697,8 +833,23 @@
           </div>
           <div style="margin-bottom:0.6rem;">
             <label for="phone">Telefonnummer*</label>
-            <input id="phone" type="tel" />
+            <input id="phone" type="tel" inputmode="numeric" pattern="[0-9]*" />
             <div class="error" id="err_phone"></div>
+
+            <!-- SMS-Verifizierung (optional) -->
+            <div id="verificationBox" class="verify-box" style="display:none;">
+              <div class="verify-header">
+                <span>Schnellere Angebote mit Verifizierung</span>
+              </div>
+              <div>Bestätigen Sie Ihre Telefonnummer per SMS und erhalten Sie bis zu 30&nbsp;% schneller Angebote.</div>
+              <button type="button" id="btnStartVerify" class="verify-btn">Jetzt verifizieren</button>
+
+              <div id="verifyCodeBox" class="verify-code" style="display:none;">
+                <label for="verify_code">SMS-Code eingeben (optional)</label>
+                <input id="verify_code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="z.B. 123456" />
+                <button type="button" id="btnResendCode" class="verify-resend">Code erneut senden</button>
+              </div>
+            </div>
           </div>
           <div style="margin-bottom:0.6rem;">
             <label for="email">E-Mail-Adresse*</label>
@@ -733,55 +884,70 @@
         </div>
       </div>
 
-      <div style="margin-top:1rem;">
-        <label for="additional_notes">Zusätzliche Anmerkungen (optional)</label>
-        <textarea id="additional_notes" placeholder="z.B. besondere Möbel, gewünschte Services, Parkmöglichkeiten …"></textarea>
-      </div>
-
       <p class="hint" style="margin-top:0.85rem;">
         Mit dem Absenden Ihrer Anfrage stimmen Sie zu, dass ausgewählte Umzugsunternehmen Sie
         telefonisch oder per E-Mail zur Angebotserstellung kontaktieren dürfen.
       </p>
     </div>
 
-    <!-- Nav row -->
-    <div class="nav-row">
-      <button class="btn btn-outline" id="btnBack">Zurück</button>
-      <button class="btn btn-primary" id="btnNext">Weiter</button>
-    </div>
-
-    <!-- Erfolg -->
-    <div id="success" style="display:none;">
+    <!-- STEP 6: FERTIG / DANKESSEITE -->
+    <div class="form-step" data-step="6">
       <div class="success-message">
+        <div class="success-circle">
+          <span>✓</span>
+        </div>
         <h2>Vielen Dank für Ihre Anfrage!</h2>
         <p class="hint">
           Ihre Daten wurden gespeichert. In der Regel erhalten Sie innerhalb von 24&nbsp;Stunden erste Angebote
           von Umzugsunternehmen aus Ihrer Region.
         </p>
+        <p class="hint" style="margin-top:0.75rem;">
+          Datenschutz: Ihre Daten werden ausschließlich zur Vermittlung von Umzugsangeboten verwendet
+          und nicht an Dritte weitergegeben.
+        </p>
       </div>
+    </div>
+
+    <!-- Nav row -->
+    <div class="nav-row" id="navRow">
+      <button class="btn btn-outline" id="btnBack">Zurück</button>
+      <button class="btn btn-primary" id="btnNext">Weiter</button>
     </div>
   </main>
 
-  <!-- Footer mit Impressum / Datenschutz -->
-  <footer class="legal-footer">
-    <span>© 2025 umzugkostencheck.de</span>
-    <span>·</span>
-    <a href="impressum.html">Impressum</a>
-    <span>·</span>
-    <a href="datenschutz.html">Datenschutz</a>
+  <!-- KLEINER FOOTER MIT LINKS -->
+  <footer class="site-footer">
+    <div class="container">
+      <a href="impressum.html">Impressum</a> ·
+      <a href="datenschutz.html">Datenschutz</a>
+    </div>
   </footer>
 </div>
 
 <script>
-  const TOTAL_STEPS = 5;
+  const TOTAL_STEPS = 5; // letzter Form-Schritt 5, Schritt 6 = Dankesseite
   let currentStep = 1;
   const formData = {};
+  let todayStr = null;
 
   const stepEls = document.querySelectorAll(".form-step");
   const indicatorItems = document.querySelectorAll("#stepIndicator .step-item");
   const btnBack = document.getElementById("btnBack");
   const btnNext = document.getElementById("btnNext");
-  const successBox = document.getElementById("success");
+  const navRow = document.getElementById("navRow");
+
+  const loadingBox = document.getElementById("matchingLoading");
+  const resultBox = document.getElementById("matchingResult");
+
+  function initDatesMin(){
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    todayStr = today.toISOString().split("T")[0];
+    ["move_date","move_date_from","move_date_to"].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.min = todayStr;
+    });
+  }
 
   function showStep(step){
     currentStep = step;
@@ -793,19 +959,31 @@
       item.classList.toggle("current", s === step);
       item.classList.toggle("completed", s < step);
     });
+
     btnBack.disabled = (step === 1);
-    btnNext.textContent = (step === TOTAL_STEPS) ? "Angebote erhalten" : "Weiter";
+
+    if(step === 4){
+      btnNext.style.display = "none";
+      runMatchingAnimation();
+    }else{
+      btnNext.style.display = "inline-flex";
+    }
+
+    if(navRow){
+      navRow.style.display = (step === 6) ? "none" : "flex";
+    }
+
+    btnNext.textContent = (step === 5) ? "Angebote erhalten" : "Weiter";
+
     validateStep();
   }
 
   function collectData(){
-    // Step 1
     formData.move_from_zip = document.getElementById("move_from_zip").value.trim();
     formData.move_from_city = document.getElementById("move_from_city").value.trim();
     formData.move_to_zip = document.getElementById("move_to_zip").value.trim();
     formData.move_to_city = document.getElementById("move_to_city").value.trim();
 
-    // Step 2
     formData.living_space_from = document.getElementById("living_space_from").value;
     formData.rooms_from = document.getElementById("rooms_from").value;
     formData.floor_from = document.getElementById("floor_from").value;
@@ -816,8 +994,8 @@
     formData.floor_to = document.getElementById("floor_to").value;
     formData.has_elevator_to = document.getElementById("has_elevator_to").checked;
 
-    // Step 3 (already stored via choice handlers)
-    // Step 5
+    formData.move_notes = document.getElementById("move_notes")?.value.trim() || "";
+
     formData.customer_name = document.getElementById("customer_name").value.trim();
     formData.phone = document.getElementById("phone").value.trim();
     formData.email = document.getElementById("email").value.trim();
@@ -826,7 +1004,7 @@
     formData.move_date = document.getElementById("move_date").value;
     formData.move_date_from = document.getElementById("move_date_from").value;
     formData.move_date_to = document.getElementById("move_date_to").value;
-    formData.additional_notes = document.getElementById("additional_notes").value.trim();
+    formData.verify_code = document.getElementById("verify_code")?.value.trim() || "";
   }
 
   function clearErrors(){
@@ -840,49 +1018,78 @@
 
     if(currentStep === 1){
       if(!formData.move_from_zip){
-        document.getElementById("err_from_zip").textContent = "Bitte Postleitzahl eingeben.";
+        const el = document.getElementById("err_from_zip");
+        if(el) el.textContent = "Bitte Postleitzahl eingeben.";
         valid = false;
       }
       if(!formData.move_to_zip){
-        document.getElementById("err_to_zip").textContent = "Bitte Postleitzahl eingeben.";
+        const el2 = document.getElementById("err_to_zip");
+        if(el2) el2.textContent = "Bitte Postleitzahl eingeben.";
         valid = false;
       }
     }
 
     if(currentStep === 3){
       if(!formData.move_type || typeof formData.is_international === "undefined" || !formData.move_scope){
-        document.getElementById("err_step3").textContent =
-          "Bitte wählen Sie jeweils eine Option aus allen Bereichen.";
+        const el3 = document.getElementById("err_step3");
+        if(el3){
+          el3.textContent = "Bitte wählen Sie jeweils eine Option aus allen Bereichen.";
+        }
         valid = false;
       }
     }
 
     if(currentStep === 5){
       if(!formData.customer_name){
-        document.getElementById("err_name").textContent = "Bitte Namen eingeben.";
+        const el4 = document.getElementById("err_name");
+        if(el4) el4.textContent = "Bitte Namen eingeben.";
         valid = false;
       }
       if(!formData.phone){
-        document.getElementById("err_phone").textContent = "Bitte Telefonnummer eingeben.";
+        const el5 = document.getElementById("err_phone");
+        if(el5) el5.textContent = "Bitte Telefonnummer eingeben.";
         valid = false;
       }
       if(!formData.email){
-        document.getElementById("err_email").textContent = "Bitte E-Mail eingeben.";
+        const el6 = document.getElementById("err_email");
+        if(el6) el6.textContent = "Bitte E-Mail eingeben.";
         valid = false;
       }
+
       let hasDateInfo = false;
+      let dateError = "";
+
       if(formData.move_date_type === "fest"){
         hasDateInfo = !!formData.move_date;
+        if(hasDateInfo && todayStr && formData.move_date < todayStr){
+          dateError = "Das Datum darf nicht in der Vergangenheit liegen.";
+          hasDateInfo = false;
+        }
       } else {
         hasDateInfo = !!(formData.move_date_from && formData.move_date_to);
+        if(hasDateInfo && todayStr){
+          if(formData.move_date_from < todayStr || formData.move_date_to < todayStr){
+            dateError = "Die Daten dürfen nicht in der Vergangenheit liegen.";
+            hasDateInfo = false;
+          } else if(formData.move_date_from > formData.move_date_to){
+            dateError = "Der Zeitraum ist ungültig (Von-Datum liegt nach dem Bis-Datum).";
+            hasDateInfo = false;
+          }
+        }
       }
+
       if(!hasDateInfo){
-        document.getElementById("err_date").textContent = "Bitte Umzugstermin angeben.";
+        const el7 = document.getElementById("err_date");
+        if(el7){
+          el7.textContent = dateError || "Bitte Umzugstermin angeben.";
+        }
         valid = false;
       }
     }
 
-    btnNext.disabled = !valid;
+    if(currentStep !== 4){
+      btnNext.disabled = !valid;
+    }
     return valid;
   }
 
@@ -898,13 +1105,12 @@
     if(currentStep < TOTAL_STEPS){
       showStep(currentStep+1);
     }else{
-      // Submit (hier könntest du später API/Backend anbinden)
       collectData();
       console.log("Formular-Daten:", formData);
       document.querySelector("main.card").scrollIntoView({behavior:"smooth"});
-      successBox.style.display = "block";
       btnBack.disabled = true;
       btnNext.disabled = true;
+      showStep(6);
     }
   });
 
@@ -943,16 +1149,64 @@
     validateStep();
   });
 
-  // Live validation basic
+  // Live validation basics
   document.querySelectorAll("input,select,textarea").forEach(el=>{
     el.addEventListener("input", ()=>{
-      if(currentStep === 5 || currentStep === 1){
+      if(currentStep === 1 || currentStep === 5){
         validateStep();
       }
     });
   });
 
-  // Initial state
+  // Telefon / Verifizierung
+  const phoneInput = document.getElementById("phone");
+  const verificationBox = document.getElementById("verificationBox");
+  const verifyCodeBox = document.getElementById("verifyCodeBox");
+  const btnStartVerify = document.getElementById("btnStartVerify");
+  const verifyCodeInput = document.getElementById("verify_code");
+  const btnResendCode = document.getElementById("btnResendCode");
+
+  phoneInput.addEventListener("input", ()=>{
+    phoneInput.value = phoneInput.value.replace(/\D/g,"");
+    if(phoneInput.value.length > 0){
+      verificationBox.style.display = "block";
+    }else{
+      verificationBox.style.display = "none";
+      verifyCodeBox.style.display = "none";
+      if(verifyCodeInput) verifyCodeInput.value = "";
+    }
+    if(currentStep === 5) validateStep();
+  });
+
+  btnStartVerify.addEventListener("click", ()=>{
+    verifyCodeBox.style.display = "flex";
+  });
+
+  if(btnResendCode){
+    btnResendCode.addEventListener("click", ()=>{
+      console.log("Code erneut senden angeklickt");
+    });
+  }
+
+  // Matching-Animation in Schritt 4
+  function runMatchingAnimation(){
+    if(!loadingBox || !resultBox) return;
+    loadingBox.style.display = "block";
+    resultBox.style.display = "none";
+
+    setTimeout(()=>{
+      loadingBox.style.display = "none";
+      resultBox.style.display = "block";
+    },2000);
+
+    setTimeout(()=>{
+      if(currentStep === 4){
+        showStep(5);
+      }
+    },4000);
+  }
+
+  initDatesMin();
   validateStep();
 </script>
 </body>
