@@ -926,6 +926,8 @@
 
 <script>
   const TOTAL_STEPS = 5; // letzter Form-Schritt 5, Schritt 6 = Dankesseite
+  const API_URL = "http://127.0.0.1:8000/api/leads"; // später z.B. https://umzugkostencheck.de/api/leads
+
   let currentStep = 1;
   const formData = {};
   let todayStr = null;
@@ -999,6 +1001,7 @@
     formData.customer_name = document.getElementById("customer_name").value.trim();
     formData.phone = document.getElementById("phone").value.trim();
     formData.email = document.getElementById("email").value.trim();
+
     const dateType = document.getElementById("move_date_type").value;
     formData.move_date_type = dateType;
     formData.move_date = document.getElementById("move_date").value;
@@ -1099,18 +1102,50 @@
     }
   });
 
-  btnNext.addEventListener("click", ()=>{
+  // 👉 HIER: Button-Handler asynchron, damit wir die API aufrufen können
+  btnNext.addEventListener("click", async ()=>{
     if(!validateStep()) return;
 
+    // Zwischen-Schritte einfach weiterblättern
     if(currentStep < TOTAL_STEPS){
       showStep(currentStep+1);
-    }else{
-      collectData();
-      console.log("Formular-Daten:", formData);
+      return;
+    }
+
+    // Letzter Schritt: Daten an Backend senden
+    collectData();
+    console.log("Formular-Daten (werden gesendet):", formData);
+
+    btnBack.disabled = true;
+    btnNext.disabled = true;
+    const originalText = btnNext.textContent;
+    btnNext.textContent = "Senden...";
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {
+        throw new Error("Serverfehler: " + response.status);
+      }
+
+      const result = await response.json();
+      console.log("Lead gespeichert:", result);
+
       document.querySelector("main.card").scrollIntoView({behavior:"smooth"});
-      btnBack.disabled = true;
-      btnNext.disabled = true;
       showStep(6);
+    } catch (err) {
+      console.error("Fehler beim Senden des Leads:", err);
+      alert("Es ist ein Fehler bei der Übermittlung Ihrer Anfrage aufgetreten. Bitte versuchen Sie es erneut.");
+      btnBack.disabled = false;
+      btnNext.disabled = false;
+      btnNext.textContent = originalText;
     }
   });
 
