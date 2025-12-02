@@ -926,9 +926,12 @@
 <script>
   const TOTAL_STEPS = 5;
 
-  // 🔗 HIER später deine echte Backend-URL eintragen, z.B.:
-  // const API_URL = "https://api.umzugkostencheck.de/api/leads";
-  // Bis dahin ist das nur ein Platzhalter:
+  // 🟢 Solange dein Backend NICHT live ist → keine API-Requests senden
+  const USE_MOCK_SUBMIT = true;
+
+  // 🔴 Sobald dein Backend online ist, UNBEDINGT anpassen:
+  // const USE_MOCK_SUBMIT = false;
+  // const API_URL = "https://deine-domain.de/api/leads";
   const API_URL = "https://DEIN-BACKEND-DOMAIN/api/leads";
 
   let currentStep = 1;
@@ -959,6 +962,7 @@
     stepEls.forEach(el => {
       el.classList.toggle("active", Number(el.dataset.step) === step);
     });
+
     indicatorItems.forEach(item => {
       const s = Number(item.dataset.step);
       item.classList.toggle("current", s === step);
@@ -996,24 +1000,23 @@
     formData.floor_to = document.getElementById("floor_to").value;
     formData.has_elevator_to = document.getElementById("has_elevator_to").checked;
 
-    formData.move_notes = document.getElementById("move_notes")?.value.trim() || "";
+    formData.move_notes = document.getElementById("move_notes").value.trim();
 
     formData.customer_name = document.getElementById("customer_name").value.trim();
     formData.phone = document.getElementById("phone").value.trim();
     formData.email = document.getElementById("email").value.trim();
 
-    const dateType = document.getElementById("move_date_type").value;
-    formData.move_date_type = dateType;
+    formData.move_date_type = document.getElementById("move_date_type").value;
     formData.move_date = document.getElementById("move_date").value;
     formData.move_date_from = document.getElementById("move_date_from").value;
     formData.move_date_to = document.getElementById("move_date_to").value;
 
-    const verifyCodeInput = document.getElementById("verify_code");
-    formData.verify_code = verifyCodeInput ? verifyCodeInput.value.trim() : "";
+    const verifyInput = document.getElementById("verify_code");
+    formData.verify_code = verifyInput ? verifyInput.value.trim() : "";
   }
 
   function clearErrors() {
-    document.querySelectorAll(".error").forEach(e => e.textContent = "");
+    document.querySelectorAll(".error").forEach(e => (e.textContent = ""));
   }
 
   function validateStep() {
@@ -1023,13 +1026,11 @@
 
     if (currentStep === 1) {
       if (!formData.move_from_zip) {
-        const el = document.getElementById("err_from_zip");
-        if (el) el.textContent = "Bitte Postleitzahl eingeben.";
+        document.getElementById("err_from_zip").textContent = "Bitte Postleitzahl eingeben.";
         valid = false;
       }
       if (!formData.move_to_zip) {
-        const el2 = document.getElementById("err_to_zip");
-        if (el2) el2.textContent = "Bitte Postleitzahl eingeben.";
+        document.getElementById("err_to_zip").textContent = "Bitte Postleitzahl eingeben.";
         valid = false;
       }
     }
@@ -1038,58 +1039,49 @@
       if (!formData.move_type ||
           typeof formData.is_international === "undefined" ||
           !formData.move_scope) {
-        const el3 = document.getElementById("err_step3");
-        if (el3) {
-          el3.textContent = "Bitte wählen Sie jeweils eine Option aus allen Bereichen.";
-        }
+        document.getElementById("err_step3").textContent =
+          "Bitte wählen Sie jeweils eine Option aus allen Bereichen.";
         valid = false;
       }
     }
 
     if (currentStep === 5) {
       if (!formData.customer_name) {
-        const el4 = document.getElementById("err_name");
-        if (el4) el4.textContent = "Bitte Namen eingeben.";
+        document.getElementById("err_name").textContent = "Bitte Namen eingeben.";
         valid = false;
       }
       if (!formData.phone) {
-        const el5 = document.getElementById("err_phone");
-        if (el5) el5.textContent = "Bitte Telefonnummer eingeben.";
+        document.getElementById("err_phone").textContent = "Bitte Telefonnummer eingeben.";
         valid = false;
       }
       if (!formData.email) {
-        const el6 = document.getElementById("err_email");
-        if (el6) el6.textContent = "Bitte E-Mail eingeben.";
+        document.getElementById("err_email").textContent = "Bitte E-Mail eingeben.";
         valid = false;
       }
 
-      let hasDateInfo = false;
-      let dateError = "";
+      let hasDate = false;
 
       if (formData.move_date_type === "fest") {
-        hasDateInfo = !!formData.move_date;
+        hasDate = !!formData.move_date;
       } else {
-        hasDateInfo = !!(formData.move_date_from && formData.move_date_to);
-        if (hasDateInfo && formData.move_date_from > formData.move_date_to) {
-          dateError = "Der Zeitraum ist ungültig (Von-Datum liegt nach dem Bis-Datum).";
-          hasDateInfo = false;
-        }
+        hasDate =
+          !!formData.move_date_from &&
+          !!formData.move_date_to &&
+          formData.move_date_from <= formData.move_date_to;
       }
 
-      if (!hasDateInfo) {
-        const el7 = document.getElementById("err_date");
-        if (el7) el7.textContent = dateError || "Bitte Umzugstermin angeben.";
+      if (!hasDate) {
+        document.getElementById("err_date").textContent =
+          "Bitte gültigen Umzugstermin angeben.";
         valid = false;
       }
     }
 
-    if (currentStep !== 4) {
-      btnNext.disabled = !valid;
-    }
+    if (currentStep !== 4) btnNext.disabled = !valid;
     return valid;
   }
 
-  // Choice cards (Step 3)
+  // Wahlkarten (Step 3)
   document.querySelectorAll(".choice-card").forEach(card => {
     card.addEventListener("click", () => {
       const group = card.dataset.choiceGroup;
@@ -1101,18 +1093,14 @@
 
       card.classList.add("selected");
 
-      if (group === "move_type") {
-        formData.move_type = value;
-      } else if (group === "is_international") {
-        formData.is_international = (value === "true");
-      } else if (group === "move_scope") {
-        formData.move_scope = value;
-      }
+      formData[group] =
+        group === "is_international" ? value === "true" : value;
+
       validateStep();
     });
   });
 
-  // Date switch Step 5
+  // Datumswechsel
   const dateTypeSelect = document.getElementById("move_date_type");
   const dateFixed = document.getElementById("date_fixed");
   const dateRange = document.getElementById("date_range");
@@ -1128,110 +1116,44 @@
     validateStep();
   });
 
-  // Live validation
-  document.querySelectorAll("input,select,textarea").forEach(el => {
-    el.addEventListener("input", () => {
-      if (currentStep === 1 || currentStep === 5) {
-        validateStep();
-      }
-    });
-  });
-
-  // Telefon / Verifizierung (optisch, ohne echte SMS-Logik)
-  const phoneInput = document.getElementById("phone");
-  const verificationBox = document.getElementById("verificationBox");
-  const verifyCodeBox = document.getElementById("verifyCodeBox");
-  const btnStartVerify = document.getElementById("btnStartVerify");
-  const btnResendCode = document.getElementById("btnResendCode");
-
-  phoneInput.addEventListener("input", () => {
-    phoneInput.value = phoneInput.value.replace(/\D/g, "");
-    if (phoneInput.value.length > 0) {
-      verificationBox.style.display = "block";
-    } else {
-      verificationBox.style.display = "none";
-      verifyCodeBox.style.display = "none";
-      const verifyInput = document.getElementById("verify_code");
-      if (verifyInput) verifyInput.value = "";
-    }
-    if (currentStep === 5) validateStep();
-  });
-
-  btnStartVerify.addEventListener("click", () => {
-    verifyCodeBox.style.display = "flex";
-  });
-
-  if (btnResendCode) {
-    btnResendCode.addEventListener("click", () => {
-      console.log("Code erneut senden angeklickt");
-    });
-  }
-
-  // Mapping exakt auf deinen LandingLeadController::store()
-  function buildPayloadForApi() {
-    return {
-      move_from_zip: formData.move_from_zip || null,
-      move_from_city: formData.move_from_city || null,
-      move_to_zip: formData.move_to_zip || null,
-      move_to_city: formData.move_to_city || null,
-
-      living_space_from: formData.living_space_from || null,
-      rooms_from: formData.rooms_from || null,
-      floor_from: formData.floor_from || null,
-      has_elevator_from: !!formData.has_elevator_from,
-
-      living_space_to: formData.living_space_to || null,
-      rooms_to: formData.rooms_to || null,
-      floor_to: formData.floor_to || null,
-      has_elevator_to: !!formData.has_elevator_to,
-
-      move_notes: formData.move_notes || null,
-      move_type: formData.move_type || null,
-      is_international: (typeof formData.is_international !== "undefined")
-        ? !!formData.is_international
-        : null,
-      move_scope: formData.move_scope || null,
-
-      customer_name: formData.customer_name || null,
-      phone: formData.phone || null,
-      email: formData.email || null,
-
-      move_date_type: formData.move_date_type || null,
-      move_date: formData.move_date || null,
-      move_date_from: formData.move_date_from || null,
-      move_date_to: formData.move_date_to || null,
-
-      verify_code: formData.verify_code || null,
-    };
-  }
-
+  // Step-Navigation
   btnBack.addEventListener("click", () => {
     if (currentStep > 1) showStep(currentStep - 1);
   });
 
+  // ABSENDEN
   btnNext.addEventListener("click", async () => {
     if (!validateStep()) return;
 
+    // nicht letzter Schritt → weiterblättern
     if (currentStep < TOTAL_STEPS) {
       showStep(currentStep + 1);
       return;
     }
 
+    // Daten sammeln
     collectData();
-    const payload = buildPayloadForApi();
-    console.log("Payload für API:", payload);
+    const payload = { ...formData };
+    console.log("📦 Payload an Backend:", payload);
 
-    btnBack.disabled = true;
+    // 🟢 DEMO-MODUS → kein Request!
+    if (USE_MOCK_SUBMIT) {
+      console.log("⭐ USE_MOCK_SUBMIT = true → KEIN Request gesendet.");
+      document.querySelector("main.card").scrollIntoView({ behavior: "smooth" });
+      showStep(6);
+      return;
+    }
+
+    // 🔴 Echter Request (erst wenn Backend live ist)
     btnNext.disabled = true;
-    const originalText = btnNext.textContent;
-    btnNext.textContent = "Senden...";
+    btnNext.textContent = "Senden…";
 
     try {
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Accept": "application/json"
+          Accept: "application/json"
         },
         body: JSON.stringify(payload)
       });
@@ -1239,29 +1161,27 @@
       const result = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        console.error("Fehler vom Server:", result);
-        alert(result.message || "Es ist ein Fehler bei der Übermittlung Ihrer Anfrage aufgetreten. Bitte prüfen Sie Ihre Eingaben.");
-        btnBack.disabled = false;
+        alert(
+          result.message ||
+            "Es ist ein Fehler bei der Übermittlung Ihrer Anfrage aufgetreten."
+        );
         btnNext.disabled = false;
-        btnNext.textContent = originalText;
+        btnNext.textContent = "Angebote erhalten";
         return;
       }
 
-      console.log("Lead gespeichert:", result);
-      document.querySelector("main.card").scrollIntoView({ behavior: "smooth" });
+      console.log("✔ Lead gespeichert:", result);
       showStep(6);
 
     } catch (err) {
-      console.error("Fehler beim Senden des Leads:", err);
-      alert("Es ist ein Verbindungsfehler aufgetreten. Später erneut versuchen.");
-      btnBack.disabled = false;
+      console.error("Verbindungsfehler:", err);
+      alert("Es ist ein Verbindungsfehler aufgetreten. Bitte später erneut versuchen.");
       btnNext.disabled = false;
-      btnNext.textContent = originalText;
+      btnNext.textContent = "Angebote erhalten";
     }
   });
 
   function runMatchingAnimation() {
-    if (!loadingBox || !resultBox) return;
     loadingBox.style.display = "block";
     resultBox.style.display = "none";
 
