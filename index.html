@@ -929,9 +929,9 @@
   // 🟢 Solange dein Backend NICHT live ist → keine API-Requests senden
   const USE_MOCK_SUBMIT = true;
 
-  // 🔴 Sobald dein Backend online ist, UNBEDINGT anpassen:
+  // 🔴 Sobald Backend online ist:
   // const USE_MOCK_SUBMIT = false;
-  // const API_URL = "https://deine-domain.de/api/leads";
+  // const API_URL = "https://dein-backend.de/api/leads";
   const API_URL = "https://DEIN-BACKEND-DOMAIN/api/leads";
 
   let currentStep = 1;
@@ -1100,7 +1100,7 @@
     });
   });
 
-  // Datumswechsel
+  // Datumswechsel Step 5
   const dateTypeSelect = document.getElementById("move_date_type");
   const dateFixed = document.getElementById("date_fixed");
   const dateRange = document.getElementById("date_range");
@@ -1116,12 +1116,21 @@
     validateStep();
   });
 
-  // Step-Navigation
+  // 🔁 Live-Validierung bei Eingaben (wichtig für Schritt 1 & 5)
+  document.querySelectorAll("input,select,textarea").forEach(el => {
+    el.addEventListener("input", () => {
+      if (currentStep === 1 || currentStep === 5) {
+        validateStep();
+      }
+    });
+  });
+
+  // Step-Navigation zurück
   btnBack.addEventListener("click", () => {
     if (currentStep > 1) showStep(currentStep - 1);
   });
 
-  // ABSENDEN
+  // ABSENDEN / WEITER
   btnNext.addEventListener("click", async () => {
     if (!validateStep()) return;
 
@@ -1131,12 +1140,12 @@
       return;
     }
 
-    // Daten sammeln
+    // Letzter Schritt (Kontakt) → Daten sammeln
     collectData();
     const payload = { ...formData };
     console.log("📦 Payload an Backend:", payload);
 
-    // 🟢 DEMO-MODUS → kein Request!
+    // 🟢 DEMO-MODUS → kein Request, direkt Danke-Seite
     if (USE_MOCK_SUBMIT) {
       console.log("⭐ USE_MOCK_SUBMIT = true → KEIN Request gesendet.");
       document.querySelector("main.card").scrollIntoView({ behavior: "smooth" });
@@ -1144,7 +1153,7 @@
       return;
     }
 
-    // 🔴 Echter Request (erst wenn Backend live ist)
+    // 🔴 ECHTER Request (erst wenn Backend live ist)
     btnNext.disabled = true;
     btnNext.textContent = "Senden…";
 
@@ -1182,6 +1191,8 @@
   });
 
   function runMatchingAnimation() {
+    if (!loadingBox || !resultBox) return;
+
     loadingBox.style.display = "block";
     resultBox.style.display = "none";
 
