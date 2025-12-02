@@ -926,13 +926,9 @@
 
 <script>
   const TOTAL_STEPS = 5; // letzter Form-Schritt 5, Schritt 6 = Dankesseite
-  // Wenn Landingpage und Backend auf derselben Domain laufen:
-  // ALT
-const API_URL = "/api/leads";
-// NEU
-const API_URL = "http://127.0.0.1:8000/api/leads";
-  // Für lokalen Test ggf. explizit:
-  // const API_URL = "http://127.0.0.1:8000/api/leads";
+
+  // 🔥 LOKALES BACKEND (php artisan serve)
+  const API_URL = "http://127.0.0.1:8000/api/leads";
 
   let currentStep = 1;
   const formData = {};
@@ -1081,7 +1077,7 @@ const API_URL = "http://127.0.0.1:8000/api/leads";
             dateError = "Die Daten dürfen nicht in der Vergangenheit liegen.";
             hasDateInfo = false;
           } else if(formData.move_date_from > formData.move_date_to){
-            dateError = "Der Zeitraum ist ungültig (Von-Datum liegt nach dem Bis-Datum).";
+            dateError = "Der Zeitraum ist ungültig.";
             hasDateInfo = false;
           }
         }
@@ -1102,58 +1098,46 @@ const API_URL = "http://127.0.0.1:8000/api/leads";
     return valid;
   }
 
-  // Mapping der Daten auf das Payload für dein Laravel-Backend
+  // Payload für Laravel
   function buildPayloadForApi() {
-    // Zahlen casten oder null schicken
     const toNumberOrNull = (val) => {
       if (val === null || val === undefined || val === "") return null;
       const n = Number(val);
       return Number.isNaN(n) ? null : n;
     };
 
-    const payload = {
-      // Route
+    return {
       move_from_zip: formData.move_from_zip || null,
       move_from_city: formData.move_from_city || null,
       move_to_zip: formData.move_to_zip || null,
       move_to_city: formData.move_to_city || null,
 
-      // Wohnung Auszug
       living_space_from: toNumberOrNull(formData.living_space_from),
       rooms_from: toNumberOrNull(formData.rooms_from),
       floor_from: formData.floor_from || null,
       has_elevator_from: !!formData.has_elevator_from,
 
-      // Wohnung Einzug
       living_space_to: toNumberOrNull(formData.living_space_to),
       rooms_to: toNumberOrNull(formData.rooms_to),
       floor_to: formData.floor_to || null,
       has_elevator_to: !!formData.has_elevator_to,
 
-      // Art des Umzugs
       move_notes: formData.move_notes || null,
-      move_type: formData.move_type || null,                // privat / geschaeft
-      is_international: (typeof formData.is_international !== "undefined")
-        ? !!formData.is_international
-        : null,                                             // true/false
-      move_scope: formData.move_scope || null,              // ganzer_haushalt etc.
+      move_type: formData.move_type || null,
+      is_international: typeof formData.is_international !== "undefined" ? !!formData.is_international : null,
+      move_scope: formData.move_scope || null,
 
-      // Kontakt
       customer_name: formData.customer_name || null,
       phone: formData.phone || null,
       email: formData.email || null,
 
-      // Termin
-      move_date_type: formData.move_date_type || null,      // fest / zeitraum
+      move_date_type: formData.move_date_type || null,
       move_date: formData.move_date || null,
       move_date_from: formData.move_date_from || null,
       move_date_to: formData.move_date_to || null,
 
-      // Optionaler SMS-Code
       verify_code: formData.verify_code || null,
     };
-
-    return payload;
   }
 
   btnBack.addEventListener("click", ()=>{
@@ -1162,17 +1146,14 @@ const API_URL = "http://127.0.0.1:8000/api/leads";
     }
   });
 
-  // 👉 API-Call ausführen, wenn letzter Schritt
   btnNext.addEventListener("click", async ()=>{
     if(!validateStep()) return;
 
-    // Zwischen-Schritte einfach weiterblättern
     if(currentStep < TOTAL_STEPS){
       showStep(currentStep+1);
       return;
     }
 
-    // Letzter Schritt: Daten an Backend senden
     collectData();
     const payload = buildPayloadForApi();
     console.log("Payload für API:", payload);
@@ -1204,9 +1185,9 @@ const API_URL = "http://127.0.0.1:8000/api/leads";
       }
 
       console.log("Lead gespeichert:", result);
-
       document.querySelector("main.card").scrollIntoView({behavior:"smooth"});
       showStep(6);
+
     } catch (err) {
       console.error("Fehler beim Senden des Leads:", err);
       alert("Es ist ein Fehler bei der Übermittlung Ihrer Anfrage aufgetreten. Bitte versuchen Sie es erneut.");
@@ -1216,7 +1197,6 @@ const API_URL = "http://127.0.0.1:8000/api/leads";
     }
   });
 
-  // Choice cards (step 3)
   document.querySelectorAll(".choice-card").forEach(card=>{
     card.addEventListener("click", ()=>{
       const group = card.dataset.choiceGroup;
@@ -1251,7 +1231,6 @@ const API_URL = "http://127.0.0.1:8000/api/leads";
     validateStep();
   });
 
-  // Live validation basics
   document.querySelectorAll("input,select,textarea").forEach(el=>{
     el.addEventListener("input", ()=>{
       if(currentStep === 1 || currentStep === 5){
@@ -1260,7 +1239,6 @@ const API_URL = "http://127.0.0.1:8000/api/leads";
     });
   });
 
-  // Telefon / Verifizierung
   const phoneInput = document.getElementById("phone");
   const verificationBox = document.getElementById("verificationBox");
   const verifyCodeBox = document.getElementById("verifyCodeBox");
@@ -1290,7 +1268,6 @@ const API_URL = "http://127.0.0.1:8000/api/leads";
     });
   }
 
-  // Matching-Animation in Schritt 4
   function runMatchingAnimation(){
     if(!loadingBox || !resultBox) return;
     loadingBox.style.display = "block";
