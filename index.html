@@ -923,12 +923,13 @@
     </div>
   </footer>
 </div>
-<script>
-  const TOTAL_STEPS = 5;
 
-  // WICHTIG: Wenn HTML über Laravel läuft (http://127.0.0.1:8000/landing.html),
-  // funktioniert /api/leads AUTOMATISCH korrekt.
+<script>
+  const TOTAL_STEPS = 5; // letzter Form-Schritt 5, Schritt 6 = Dankesseite
+  // Wenn Landingpage und Backend auf derselben Domain laufen:
   const API_URL = "/api/leads";
+  // Für lokalen Test ggf. explizit:
+  // const API_URL = "http://127.0.0.1:8000/api/leads";
 
   let currentStep = 1;
   const formData = {};
@@ -943,22 +944,22 @@
   const loadingBox = document.getElementById("matchingLoading");
   const resultBox = document.getElementById("matchingResult");
 
-  function initDatesMin() {
+  function initDatesMin(){
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setHours(0,0,0,0);
     todayStr = today.toISOString().split("T")[0];
-    ["move_date", "move_date_from", "move_date_to"].forEach(id => {
+    ["move_date","move_date_from","move_date_to"].forEach(id=>{
       const el = document.getElementById(id);
-      if (el) el.min = todayStr;
+      if(el) el.min = todayStr;
     });
   }
 
-  function showStep(step) {
+  function showStep(step){
     currentStep = step;
-    stepEls.forEach(el => {
+    stepEls.forEach(el=>{
       el.classList.toggle("active", Number(el.dataset.step) === step);
     });
-    indicatorItems.forEach(item => {
+    indicatorItems.forEach(item=>{
       const s = Number(item.dataset.step);
       item.classList.toggle("current", s === step);
       item.classList.toggle("completed", s < step);
@@ -966,20 +967,23 @@
 
     btnBack.disabled = (step === 1);
 
-    if (step === 4) {
+    if(step === 4){
       btnNext.style.display = "none";
       runMatchingAnimation();
-    } else {
+    }else{
       btnNext.style.display = "inline-flex";
     }
 
-    navRow.style.display = (step === 6) ? "none" : "flex";
+    if(navRow){
+      navRow.style.display = (step === 6) ? "none" : "flex";
+    }
+
     btnNext.textContent = (step === 5) ? "Angebote erhalten" : "Weiter";
 
     validateStep();
   }
 
-  function collectData() {
+  function collectData(){
     formData.move_from_zip = document.getElementById("move_from_zip").value.trim();
     formData.move_from_city = document.getElementById("move_from_city").value.trim();
     formData.move_to_zip = document.getElementById("move_to_zip").value.trim();
@@ -995,7 +999,7 @@
     formData.floor_to = document.getElementById("floor_to").value;
     formData.has_elevator_to = document.getElementById("has_elevator_to").checked;
 
-    formData.move_notes = document.getElementById("move_notes").value.trim();
+    formData.move_notes = document.getElementById("move_notes")?.value.trim() || "";
 
     formData.customer_name = document.getElementById("customer_name").value.trim();
     formData.phone = document.getElementById("phone").value.trim();
@@ -1006,128 +1010,173 @@
     formData.move_date = document.getElementById("move_date").value;
     formData.move_date_from = document.getElementById("move_date_from").value;
     formData.move_date_to = document.getElementById("move_date_to").value;
+    formData.verify_code = document.getElementById("verify_code")?.value.trim() || "";
   }
 
-  function clearErrors() {
-    document.querySelectorAll(".error").forEach(e => e.textContent = "");
+  function clearErrors(){
+    document.querySelectorAll(".error").forEach(e=>e.textContent="");
   }
 
-  function validateStep() {
+  function validateStep(){
     clearErrors();
     collectData();
     let valid = true;
 
-    if (currentStep === 1) {
-      if (!formData.move_from_zip) {
-        document.getElementById("err_from_zip").textContent =
-          "Bitte Postleitzahl eingeben.";
+    if(currentStep === 1){
+      if(!formData.move_from_zip){
+        const el = document.getElementById("err_from_zip");
+        if(el) el.textContent = "Bitte Postleitzahl eingeben.";
         valid = false;
       }
-      if (!formData.move_to_zip) {
-        document.getElementById("err_to_zip").textContent =
-          "Bitte Postleitzahl eingeben.";
-        valid = false;
-      }
-    }
-
-    if (currentStep === 3) {
-      if (!formData.move_type ||
-        typeof formData.is_international === "undefined" ||
-        !formData.move_scope) {
-        document.getElementById("err_step3").textContent =
-          "Bitte wählen Sie jeweils eine Option aus allen Bereichen.";
+      if(!formData.move_to_zip){
+        const el2 = document.getElementById("err_to_zip");
+        if(el2) el2.textContent = "Bitte Postleitzahl eingeben.";
         valid = false;
       }
     }
 
-    if (currentStep === 5) {
-      if (!formData.customer_name) {
-        document.getElementById("err_name").textContent = "Bitte Namen eingeben.";
+    if(currentStep === 3){
+      if(!formData.move_type || typeof formData.is_international === "undefined" || !formData.move_scope){
+        const el3 = document.getElementById("err_step3");
+        if(el3){
+          el3.textContent = "Bitte wählen Sie jeweils eine Option aus allen Bereichen.";
+        }
         valid = false;
       }
-      if (!formData.phone) {
-        document.getElementById("err_phone").textContent = "Bitte Telefonnummer eingeben.";
+    }
+
+    if(currentStep === 5){
+      if(!formData.customer_name){
+        const el4 = document.getElementById("err_name");
+        if(el4) el4.textContent = "Bitte Namen eingeben.";
         valid = false;
       }
-      if (!formData.email) {
-        document.getElementById("err_email").textContent = "Bitte E-Mail eingeben.";
+      if(!formData.phone){
+        const el5 = document.getElementById("err_phone");
+        if(el5) el5.textContent = "Bitte Telefonnummer eingeben.";
+        valid = false;
+      }
+      if(!formData.email){
+        const el6 = document.getElementById("err_email");
+        if(el6) el6.textContent = "Bitte E-Mail eingeben.";
         valid = false;
       }
 
       let hasDateInfo = false;
       let dateError = "";
 
-      if (formData.move_date_type === "fest") {
+      if(formData.move_date_type === "fest"){
         hasDateInfo = !!formData.move_date;
+        if(hasDateInfo && todayStr && formData.move_date < todayStr){
+          dateError = "Das Datum darf nicht in der Vergangenheit liegen.";
+          hasDateInfo = false;
+        }
       } else {
         hasDateInfo = !!(formData.move_date_from && formData.move_date_to);
+        if(hasDateInfo && todayStr){
+          if(formData.move_date_from < todayStr || formData.move_date_to < todayStr){
+            dateError = "Die Daten dürfen nicht in der Vergangenheit liegen.";
+            hasDateInfo = false;
+          } else if(formData.move_date_from > formData.move_date_to){
+            dateError = "Der Zeitraum ist ungültig (Von-Datum liegt nach dem Bis-Datum).";
+            hasDateInfo = false;
+          }
+        }
       }
 
-      if (!hasDateInfo) {
-        dateError = "Bitte Umzugstermin angeben.";
-        document.getElementById("err_date").textContent = dateError;
+      if(!hasDateInfo){
+        const el7 = document.getElementById("err_date");
+        if(el7){
+          el7.textContent = dateError || "Bitte Umzugstermin angeben.";
+        }
         valid = false;
       }
     }
 
-    btnNext.disabled = !valid;
+    if(currentStep !== 4){
+      btnNext.disabled = !valid;
+    }
     return valid;
   }
 
-  function buildNotes() {
-    const parts = [];
-    if (formData.move_notes) parts.push(formData.move_notes);
-    return parts.join(" | ");
-  }
-
+  // Mapping der Daten auf das Payload für dein Laravel-Backend
   function buildPayloadForApi() {
-    const nameParts = formData.customer_name.split(" ");
-    const firstName = nameParts.shift() || "";
-    const lastName = nameParts.join(" ");
-
-    const rooms = formData.rooms_from || formData.rooms_to;
-    const sqm = formData.living_space_from || formData.living_space_to;
-
-    return {
-      first_name: firstName,
-      last_name: lastName,
-      email: formData.email,
-      phone: formData.phone,
-
-      from_zip: formData.move_from_zip,
-      from_city: formData.move_from_city,
-      to_zip: formData.move_to_zip,
-      to_city: formData.move_to_city,
-
-      move_date:
-        formData.move_date_type === "fest"
-          ? formData.move_date
-          : formData.move_date_from,
-
-      rooms: rooms ? parseInt(rooms, 10) : null,
-      square_meters: sqm ? parseInt(sqm, 10) : null,
-
-      has_piano: false,
-      notes: buildNotes()
+    // Zahlen casten oder null schicken
+    const toNumberOrNull = (val) => {
+      if (val === null || val === undefined || val === "") return null;
+      const n = Number(val);
+      return Number.isNaN(n) ? null : n;
     };
+
+    const payload = {
+      // Route
+      move_from_zip: formData.move_from_zip || null,
+      move_from_city: formData.move_from_city || null,
+      move_to_zip: formData.move_to_zip || null,
+      move_to_city: formData.move_to_city || null,
+
+      // Wohnung Auszug
+      living_space_from: toNumberOrNull(formData.living_space_from),
+      rooms_from: toNumberOrNull(formData.rooms_from),
+      floor_from: formData.floor_from || null,
+      has_elevator_from: !!formData.has_elevator_from,
+
+      // Wohnung Einzug
+      living_space_to: toNumberOrNull(formData.living_space_to),
+      rooms_to: toNumberOrNull(formData.rooms_to),
+      floor_to: formData.floor_to || null,
+      has_elevator_to: !!formData.has_elevator_to,
+
+      // Art des Umzugs
+      move_notes: formData.move_notes || null,
+      move_type: formData.move_type || null,                // privat / geschaeft
+      is_international: (typeof formData.is_international !== "undefined")
+        ? !!formData.is_international
+        : null,                                             // true/false
+      move_scope: formData.move_scope || null,              // ganzer_haushalt etc.
+
+      // Kontakt
+      customer_name: formData.customer_name || null,
+      phone: formData.phone || null,
+      email: formData.email || null,
+
+      // Termin
+      move_date_type: formData.move_date_type || null,      // fest / zeitraum
+      move_date: formData.move_date || null,
+      move_date_from: formData.move_date_from || null,
+      move_date_to: formData.move_date_to || null,
+
+      // Optionaler SMS-Code
+      verify_code: formData.verify_code || null,
+    };
+
+    return payload;
   }
 
-  btnBack.addEventListener("click", () => {
-    if (currentStep > 1) showStep(currentStep - 1);
+  btnBack.addEventListener("click", ()=>{
+    if(currentStep>1){
+      showStep(currentStep-1);
+    }
   });
 
-  btnNext.addEventListener("click", async () => {
-    if (!validateStep()) return;
+  // 👉 API-Call ausführen, wenn letzter Schritt
+  btnNext.addEventListener("click", async ()=>{
+    if(!validateStep()) return;
 
-    if (currentStep < TOTAL_STEPS) {
-      showStep(currentStep + 1);
+    // Zwischen-Schritte einfach weiterblättern
+    if(currentStep < TOTAL_STEPS){
+      showStep(currentStep+1);
       return;
     }
 
+    // Letzter Schritt: Daten an Backend senden
     collectData();
     const payload = buildPayloadForApi();
+    console.log("Payload für API:", payload);
 
+    btnBack.disabled = true;
     btnNext.disabled = true;
+    const originalText = btnNext.textContent;
     btnNext.textContent = "Senden...";
 
     try {
@@ -1135,40 +1184,125 @@
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json"
+          "Accept": "application/json"
         },
         body: JSON.stringify(payload)
       });
 
-      const result = await response.json();
+      const result = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        alert("Fehler: " + JSON.stringify(result));
+        console.error("Fehler vom Server:", result);
+        alert(result.message || "Es ist ein Fehler bei der Übermittlung Ihrer Anfrage aufgetreten. Bitte prüfen Sie Ihre Eingaben.");
+        btnBack.disabled = false;
         btnNext.disabled = false;
-        btnNext.textContent = "Angebote erhalten";
+        btnNext.textContent = originalText;
         return;
       }
 
+      console.log("Lead gespeichert:", result);
+
+      document.querySelector("main.card").scrollIntoView({behavior:"smooth"});
       showStep(6);
     } catch (err) {
-      alert("Es ist ein Fehler aufgetreten: " + err.message);
+      console.error("Fehler beim Senden des Leads:", err);
+      alert("Es ist ein Fehler bei der Übermittlung Ihrer Anfrage aufgetreten. Bitte versuchen Sie es erneut.");
+      btnBack.disabled = false;
       btnNext.disabled = false;
-      btnNext.textContent = "Angebote erhalten";
+      btnNext.textContent = originalText;
     }
   });
 
-  function runMatchingAnimation() {
+  // Choice cards (step 3)
+  document.querySelectorAll(".choice-card").forEach(card=>{
+    card.addEventListener("click", ()=>{
+      const group = card.dataset.choiceGroup;
+      const value = card.dataset.choiceValue;
+      document.querySelectorAll(`.choice-card[data-choice-group="${group}"]`)
+        .forEach(c=>c.classList.remove("selected"));
+      card.classList.add("selected");
+
+      if(group === "move_type"){
+        formData.move_type = value;
+      }else if(group === "is_international"){
+        formData.is_international = (value === "true");
+      }else if(group === "move_scope"){
+        formData.move_scope = value;
+      }
+      validateStep();
+    });
+  });
+
+  // Date switch step 5
+  const dateTypeSelect = document.getElementById("move_date_type");
+  const dateFixed = document.getElementById("date_fixed");
+  const dateRange = document.getElementById("date_range");
+  dateTypeSelect.addEventListener("change", ()=>{
+    if(dateTypeSelect.value === "fest"){
+      dateFixed.style.display="block";
+      dateRange.style.display="none";
+    }else{
+      dateFixed.style.display="none";
+      dateRange.style.display="block";
+    }
+    validateStep();
+  });
+
+  // Live validation basics
+  document.querySelectorAll("input,select,textarea").forEach(el=>{
+    el.addEventListener("input", ()=>{
+      if(currentStep === 1 || currentStep === 5){
+        validateStep();
+      }
+    });
+  });
+
+  // Telefon / Verifizierung
+  const phoneInput = document.getElementById("phone");
+  const verificationBox = document.getElementById("verificationBox");
+  const verifyCodeBox = document.getElementById("verifyCodeBox");
+  const btnStartVerify = document.getElementById("btnStartVerify");
+  const verifyCodeInput = document.getElementById("verify_code");
+  const btnResendCode = document.getElementById("btnResendCode");
+
+  phoneInput.addEventListener("input", ()=>{
+    phoneInput.value = phoneInput.value.replace(/\D/g,"");
+    if(phoneInput.value.length > 0){
+      verificationBox.style.display = "block";
+    }else{
+      verificationBox.style.display = "none";
+      verifyCodeBox.style.display = "none";
+      if(verifyCodeInput) verifyCodeInput.value = "";
+    }
+    if(currentStep === 5) validateStep();
+  });
+
+  btnStartVerify.addEventListener("click", ()=>{
+    verifyCodeBox.style.display = "flex";
+  });
+
+  if(btnResendCode){
+    btnResendCode.addEventListener("click", ()=>{
+      console.log("Code erneut senden angeklickt");
+    });
+  }
+
+  // Matching-Animation in Schritt 4
+  function runMatchingAnimation(){
+    if(!loadingBox || !resultBox) return;
     loadingBox.style.display = "block";
     resultBox.style.display = "none";
 
-    setTimeout(() => {
+    setTimeout(()=>{
       loadingBox.style.display = "none";
       resultBox.style.display = "block";
-    }, 2000);
+    },2000);
 
-    setTimeout(() => {
-      if (currentStep === 4) showStep(5);
-    }, 4000);
+    setTimeout(()=>{
+      if(currentStep === 4){
+        showStep(5);
+      }
+    },4000);
   }
 
   initDatesMin();
