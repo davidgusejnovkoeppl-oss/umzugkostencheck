@@ -1099,75 +1099,55 @@
     return valid;
   }
 
-  // ✨ zusätzliche Infos ins notes-Feld packen
-  function buildNotes() {
-    const parts = [];
-
-    if (formData.move_notes) {
-      parts.push(formData.move_notes);
-    }
-    if (formData.move_type) {
-      parts.push("Umzugsart: " + formData.move_type);
-    }
-    if (typeof formData.is_international !== "undefined") {
-      parts.push("International: " + (formData.is_international ? "ja" : "nein"));
-    }
-    if (formData.move_scope) {
-      parts.push("Umfang: " + formData.move_scope);
-    }
-    if (formData.move_date_type === "zeitraum" && formData.move_date_from && formData.move_date_to) {
-      parts.push("Zeitraum: " + formData.move_date_from + " bis " + formData.move_date_to);
-    }
-    if (formData.floor_from) {
-      parts.push("Etage Auszug: " + formData.floor_from + (formData.has_elevator_from ? " (mit Aufzug)" : ""));
-    }
-    if (formData.floor_to) {
-      parts.push("Etage Einzug: " + formData.floor_to + (formData.has_elevator_to ? " (mit Aufzug)" : ""));
-    }
-
-    return parts.join(" | ");
-  }
-
-  // Mapping der Formular-Daten auf das Payload für Laravel
+  // Mapping der Daten auf das Payload für dein Laravel-Backend
   function buildPayloadForApi() {
-    const fullName = formData.customer_name || "";
-    let firstName = "";
-    let lastName = "";
-
-    if (fullName) {
-      const parts = fullName.split(" ").filter(Boolean);
-      firstName = parts.shift() || "";
-      lastName = parts.join(" ");
-    }
-
-    let moveDate = null;
-    if (formData.move_date_type === "fest") {
-      moveDate = formData.move_date || null;
-    } else {
-      // Fürs Backend: Start des Zeitraums als move_date
-      moveDate = formData.move_date_from || null;
-    }
-
-    const roomsRaw = formData.rooms_from || formData.rooms_to || null;
-    const squareRaw = formData.living_space_from || formData.living_space_to || null;
+    // Zahlen casten oder null schicken
+    const toNumberOrNull = (val) => {
+      if (val === null || val === undefined || val === "") return null;
+      const n = Number(val);
+      return Number.isNaN(n) ? null : n;
+    };
 
     const payload = {
-      first_name: firstName || null,
-      last_name: lastName || null,
-      email: formData.email || null,
+      // Route
+      move_from_zip: formData.move_from_zip || null,
+      move_from_city: formData.move_from_city || null,
+      move_to_zip: formData.move_to_zip || null,
+      move_to_city: formData.move_to_city || null,
+
+      // Wohnung Auszug
+      living_space_from: toNumberOrNull(formData.living_space_from),
+      rooms_from: toNumberOrNull(formData.rooms_from),
+      floor_from: formData.floor_from || null,
+      has_elevator_from: !!formData.has_elevator_from,
+
+      // Wohnung Einzug
+      living_space_to: toNumberOrNull(formData.living_space_to),
+      rooms_to: toNumberOrNull(formData.rooms_to),
+      floor_to: formData.floor_to || null,
+      has_elevator_to: !!formData.has_elevator_to,
+
+      // Art des Umzugs
+      move_notes: formData.move_notes || null,
+      move_type: formData.move_type || null,                // privat / geschaeft
+      is_international: (typeof formData.is_international !== "undefined")
+        ? !!formData.is_international
+        : null,                                             // true/false
+      move_scope: formData.move_scope || null,              // ganzer_haushalt etc.
+
+      // Kontakt
+      customer_name: formData.customer_name || null,
       phone: formData.phone || null,
+      email: formData.email || null,
 
-      from_zip: formData.move_from_zip || null,
-      from_city: formData.move_from_city || null,
-      to_zip: formData.move_to_zip || null,
-      to_city: formData.move_to_city || null,
+      // Termin
+      move_date_type: formData.move_date_type || null,      // fest / zeitraum
+      move_date: formData.move_date || null,
+      move_date_from: formData.move_date_from || null,
+      move_date_to: formData.move_date_to || null,
 
-      move_date: moveDate || null,
-      rooms: roomsRaw ? parseInt(roomsRaw, 10) : null,
-      square_meters: squareRaw ? parseInt(squareRaw, 10) : null,
-
-      has_piano: false, // kannst du später mit einem echten Feld verbinden
-      notes: buildNotes(),
+      // Optionaler SMS-Code
+      verify_code: formData.verify_code || null,
     };
 
     return payload;
@@ -1209,11 +1189,17 @@
         body: JSON.stringify(payload)
       });
 
+      const result = await response.json().catch(() => ({}));
+
       if (!response.ok) {
-        throw new Error("Serverfehler: " + response.status);
+        console.error("Fehler vom Server:", result);
+        alert(result.message || "Es ist ein Fehler bei der Übermittlung Ihrer Anfrage aufgetreten. Bitte prüfen Sie Ihre Eingaben.");
+        btnBack.disabled = false;
+        btnNext.disabled = false;
+        btnNext.textContent = originalText;
+        return;
       }
 
-      const result = await response.json();
       console.log("Lead gespeichert:", result);
 
       document.querySelector("main.card").scrollIntoView({behavior:"smooth"});
