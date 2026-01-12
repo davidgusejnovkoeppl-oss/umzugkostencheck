@@ -618,6 +618,9 @@
   const formData = {};
   let todayStr = null;
 
+  // ✅ Backend API (lokal). Später live ersetzen.
+  const API_URL = "http://127.0.0.1:8000/api/leads";
+
   const stepEls = document.querySelectorAll(".form-step");
   const indicatorItems = document.querySelectorAll("#stepIndicator .step-item");
   const btnBack = document.getElementById("btnBack");
@@ -849,8 +852,8 @@
     if (currentStep > 1) showStep(currentStep - 1);
   });
 
-  // Weiter / Senden (GitHub-Version: noch ohne Backend-Call)
-  btnNext.addEventListener("click", () => {
+  // ✅ Weiter / Senden (MIT Backend-Call)
+  btnNext.addEventListener("click", async () => {
     if (!validateStep()) return;
 
     if (currentStep < TOTAL_STEPS) {
@@ -867,12 +870,67 @@
       return;
     }
 
-    // Hier später der echte API-Call rein, sobald Backend live ist.
-    // (UI ist bereits auf E-Mail-Bestätigung vorbereitet.)
-    console.log("Formulardaten:", formData);
+    // --- API CALL ---
+    btnNext.disabled = true;
 
-    document.querySelector("main.card").scrollIntoView({ behavior: "smooth" });
-    showStep(6);
+    const payload = {
+      move_from_zip: formData.move_from_zip,
+      move_from_city: formData.move_from_city || null,
+      move_to_zip: formData.move_to_zip,
+      move_to_city: formData.move_to_city || null,
+
+      living_space_from: formData.living_space_from ? Number(formData.living_space_from) : null,
+      rooms_from: formData.rooms_from ? Number(formData.rooms_from) : null,
+      floor_from: formData.floor_from || null,
+      has_elevator_from: !!formData.has_elevator_from,
+
+      living_space_to: formData.living_space_to ? Number(formData.living_space_to) : null,
+      rooms_to: formData.rooms_to ? Number(formData.rooms_to) : null,
+      floor_to: formData.floor_to || null,
+      has_elevator_to: !!formData.has_elevator_to,
+
+      move_notes: formData.move_notes || null,
+      move_type: formData.move_type || null,
+      is_international: (typeof formData.is_international === "boolean") ? formData.is_international : null,
+      move_scope: formData.move_scope || null,
+
+      customer_name: formData.customer_name,
+      phone: formData.phone,
+      email: formData.email,
+
+      move_date_type: formData.move_date_type || null,
+      move_date: formData.move_date || null,
+      move_date_from: formData.move_date_from || null,
+      move_date_to: formData.move_date_to || null
+    };
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        // minimal: nicht alles umstricken
+        console.error("Lead API Fehler:", await res.text());
+        alert("Senden fehlgeschlagen. Bitte prüfen Sie Ihre Eingaben und versuchen Sie es erneut.");
+        btnNext.disabled = false;
+        return;
+      }
+
+      // Erfolg => Backend sendet Verify-Mail (LeadVerifyMail) automatisch
+      document.querySelector("main.card").scrollIntoView({ behavior: "smooth" });
+      showStep(6);
+
+    } catch (err) {
+      console.error(err);
+      alert("Senden fehlgeschlagen. Bitte versuchen Sie es erneut.");
+      btnNext.disabled = false;
+    }
   });
 
   function runMatchingAnimation() {
