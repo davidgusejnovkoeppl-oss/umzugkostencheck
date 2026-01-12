@@ -5,11 +5,15 @@
   <title>umzugkostencheck.de – Umzugskosten vergleichen</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    :root {
-      /* Brand-Blau wie im Backend */
-      --brand-blue:#0050b3;
-      --brand-blue-dark:#004399;
-      --brand-blue-50:#e6f0ff;
+    :root{
+      /* BRAND (wie Backend) */
+      --brand:#0050b3;
+      --brand-dark:#003f8f;
+
+      --blue-50:#eff6ff;
+      --blue-100:#dbeafe;
+      --blue-400:#60a5fa;
+      --blue-500:#3b82f6;
 
       --gray-50:#f9fafb;
       --gray-100:#f3f4f6;
@@ -36,7 +40,7 @@
       flex-direction:column;
     }
     .hero{
-      background:linear-gradient(135deg,var(--brand-blue),var(--brand-blue-dark));
+      background:linear-gradient(135deg,var(--brand),var(--brand-dark));
       color:#fff;
       padding:2.5rem 1.25rem 6rem;
     }
@@ -146,7 +150,7 @@
       font-weight:500;
     }
     .step-item.current .step-circle{
-      background:linear-gradient(135deg,var(--brand-blue),var(--brand-blue-dark));
+      background:linear-gradient(135deg,var(--brand),var(--brand-dark));
       border-color:transparent;
       color:#fff;
       box-shadow:0 0 0 4px rgba(0,80,179,0.25);
@@ -162,9 +166,15 @@
       content:"✓";
       font-weight:700;
     }
-    .step-item.completed .step-circle span{ display:none; }
-    .step-item.current .step-label{ color:var(--brand-blue-dark); }
-    .step-item.completed .step-label{ color:var(--green-600); }
+    .step-item.completed .step-circle span{
+      display:none;
+    }
+    .step-item.current .step-label{
+      color:var(--brand-dark);
+    }
+    .step-item.completed .step-label{
+      color:var(--green-600);
+    }
     .step-line{
       position:absolute;
       top:22px;
@@ -178,6 +188,7 @@
       background:linear-gradient(90deg,var(--green-500),var(--green-600));
     }
 
+    /* Form layout */
     .form-step{display:none;}
     .form-step.active{display:block;}
 
@@ -213,7 +224,7 @@
       font-family:inherit;
     }
     input:focus,select:focus,textarea:focus{
-      border-color:var(--brand-blue);
+      border-color:var(--brand);
       box-shadow:0 0 0 1px rgba(0,80,179,0.25);
     }
     textarea{
@@ -236,6 +247,15 @@
       background:linear-gradient(135deg,var(--gray-50),#fff);
     }
 
+    /* Checkbox Größe */
+    input[type="checkbox"]{
+      width:18px;
+      height:18px;
+      margin:0;
+      accent-color:var(--brand);
+    }
+
+    /* Choice cards (step 3) */
     .choice-grid{
       display:grid;
       grid-template-columns:1fr;
@@ -254,14 +274,14 @@
       transition:border-color .15s,box-shadow .15s,background .15s,transform .1s;
     }
     .choice-card:hover{
-      border-color:rgba(0,80,179,0.35);
+      border-color:var(--blue-400);
       box-shadow:0 6px 20px rgba(15,23,42,0.08);
       transform:translateY(-1px);
     }
     .choice-card.selected{
-      border-color:var(--brand-blue);
-      background:linear-gradient(135deg,var(--brand-blue-50),#fff);
-      box-shadow:0 8px 24px rgba(0,80,179,0.20);
+      border-color:var(--brand);
+      background:linear-gradient(135deg,var(--blue-50),#fff);
+      box-shadow:0 8px 24px rgba(0,80,179,0.15);
     }
     .choice-title{
       font-size:0.95rem;
@@ -277,6 +297,7 @@
       .choice-grid-3{grid-template-columns:repeat(3,minmax(0,1fr));}
     }
 
+    /* Matching step */
     .matching-circle{
       width:120px;height:120px;
       border-radius:999px;
@@ -309,14 +330,14 @@
       border-radius:1.1rem;
       padding:0.9rem;
       text-align:center;
-      background:var(--brand-blue-50);
+      background:var(--blue-50);
     }
     .matching-card:nth-child(2){background:#ecfdf5;}
     .matching-card:nth-child(3){background:#f5f3ff;}
     .matching-num{
       font-size:1.2rem;
       font-weight:700;
-      color:var(--brand-blue-dark);
+      color:var(--brand-dark);
     }
     .matching-label{
       font-size:0.8rem;
@@ -334,6 +355,7 @@
       }
     }
 
+    /* Loading in step 4 */
     .matching-loading{
       text-align:center;
       padding:1.5rem 0 0.5rem;
@@ -344,13 +366,16 @@
       width:40px;
       height:40px;
       border-radius:999px;
-      border:4px solid var(--brand-blue-50);
-      border-top-color:var(--brand-blue);
+      border:4px solid var(--blue-100);
+      border-top-color:var(--brand);
       margin:0.5rem auto 0.75rem;
       animation:spin 1s linear infinite;
     }
-    @keyframes spin{ to{transform:rotate(360deg);} }
+    @keyframes spin{
+      to{transform:rotate(360deg);}
+    }
 
+    /* Footer / nav */
     .nav-row{
       display:flex;
       justify-content:space-between;
@@ -379,9 +404,9 @@
       background:#fff;
     }
     .btn-primary{
-      background:linear-gradient(135deg,var(--brand-blue),var(--brand-blue-dark));
+      background:linear-gradient(135deg,var(--brand),var(--brand-dark));
       color:#fff;
-      box-shadow:0 12px 30px rgba(0,80,179,0.35);
+      box-shadow:0 12px 30px rgba(0,80,179,0.25);
     }
     .btn-primary:disabled{
       opacity:0.5;
@@ -411,6 +436,7 @@
       font-size:1.5rem;
       margin-bottom:0.75rem;
     }
+
     .success-circle{
       width:80px;
       height:80px;
@@ -428,28 +454,35 @@
       font-weight:700;
     }
 
+    /* E-Mail Verifizierung Hinweis */
+    .email-verify-box{
+      margin-top:0.65rem;
+      border-radius:1rem;
+      border:1px solid rgba(0,80,179,0.25);
+      background:rgba(0,80,179,0.06);
+      padding:0.75rem 0.9rem;
+      font-size:0.85rem;
+      color:#1f2937;
+    }
+    .email-verify-box strong{color:var(--brand-dark);}
+
+    /* KLEINER FOOTER */
     .site-footer{
       margin-top:auto;
       padding:1rem 1.25rem 1.5rem;
       font-size:0.8rem;
       color:var(--gray-500);
     }
-    .site-footer .container{ text-align:center; }
+    .site-footer .container{
+      text-align:center;
+    }
     .site-footer a{
       color:inherit;
       text-decoration:none;
       margin:0 0.5rem;
     }
-    .site-footer a:hover{ text-decoration:underline; }
-
-    /* Honeypot: unsichtbar (Bots füllen es oft aus) */
-    .hp-wrap{
-      position:absolute !important;
-      left:-9999px !important;
-      top:auto !important;
-      width:1px !important;
-      height:1px !important;
-      overflow:hidden !important;
+    .site-footer a:hover{
+      text-decoration:underline;
     }
   </style>
 </head>
@@ -464,14 +497,24 @@
       </p>
 
       <div class="trust-row">
-        <div class="trust-item"><div class="trust-dot"></div><span>Deutschlandweit</span></div>
-        <div class="trust-item"><div class="trust-dot"></div><span>Qualifizierte Unternehmen</span></div>
-        <div class="trust-item"><div class="trust-dot"></div><span>100% kostenlos</span></div>
+        <div class="trust-item">
+          <div class="trust-dot"></div>
+          <span>Deutschlandweit</span>
+        </div>
+        <div class="trust-item">
+          <div class="trust-dot"></div>
+          <span>Qualifizierte Unternehmen</span>
+        </div>
+        <div class="trust-item">
+          <div class="trust-dot"></div>
+          <span>100% kostenlos</span>
+        </div>
       </div>
     </div>
   </header>
 
   <main class="card">
+    <!-- Step indicator -->
     <div class="steps" id="stepIndicator">
       <div class="step-item current" data-step="1">
         <div class="step-circle"><span>1</span></div>
@@ -499,18 +542,13 @@
       </div>
     </div>
 
-    <!-- Honeypot Input (nicht anzeigen) -->
-    <div class="hp-wrap" aria-hidden="true">
-      <label for="website">Website</label>
-      <input id="website" name="website" type="text" autocomplete="off" tabindex="-1" />
-    </div>
-
     <!-- STEP 1: ROUTE -->
     <div class="form-step active" data-step="1">
       <h2 class="step-title">Von wo nach wo ziehen Sie?</h2>
       <p class="step-subtitle">Geben Sie Ihre Umzugsroute an.</p>
 
       <div class="grid-2">
+        <!-- Auszug -->
         <div class="pill-card">
           <h3 style="margin:0 0 0.7rem;font-size:0.95rem;font-weight:600;display:flex;align-items:center;gap:0.4rem;">
             <span style="width:8px;height:8px;border-radius:999px;background:#ef4444;"></span>
@@ -518,7 +556,7 @@
           </h3>
           <div style="margin-bottom:0.6rem;">
             <label for="move_from_zip">Postleitzahl*</label>
-            <input id="move_from_zip" type="text" inputmode="numeric" />
+            <input id="move_from_zip" type="text" inputmode="numeric" maxlength="5" />
             <div class="error" id="err_from_zip"></div>
           </div>
           <div>
@@ -527,6 +565,7 @@
           </div>
         </div>
 
+        <!-- Einzug -->
         <div class="pill-card">
           <h3 style="margin:0 0 0.7rem;font-size:0.95rem;font-weight:600;display:flex;align-items:center;gap:0.4rem;">
             <span style="width:8px;height:8px;border-radius:999px;background:#22c55e;"></span>
@@ -534,7 +573,7 @@
           </h3>
           <div style="margin-bottom:0.6rem;">
             <label for="move_to_zip">Postleitzahl*</label>
-            <input id="move_to_zip" type="text" inputmode="numeric" />
+            <input id="move_to_zip" type="text" inputmode="numeric" maxlength="5" />
             <div class="error" id="err_to_zip"></div>
           </div>
           <div>
@@ -551,6 +590,7 @@
       <p class="step-subtitle">Diese Angaben sind freiwillig – helfen aber, den Aufwand besser einzuschätzen.</p>
 
       <div class="grid-2">
+        <!-- Wohnung Auszug -->
         <div class="pill-card">
           <h3 style="margin:0 0 0.75rem;font-size:0.95rem;font-weight:600;display:flex;align-items:center;gap:0.4rem;">
             <span style="width:8px;height:8px;border-radius:999px;background:#ef4444;"></span>
@@ -585,12 +625,14 @@
             </select>
           </div>
 
-          <div style="display:flex;align-items:center;gap:0.55rem;">
+          <!-- Aufzug linksbündig -->
+          <div style="display:flex;align-items:center;justify-content:flex-start;gap:0.55rem;">
             <input type="checkbox" id="has_elevator_from" />
             <label for="has_elevator_from" style="margin:0;font-size:0.88rem;cursor:pointer;">Aufzug vorhanden</label>
           </div>
         </div>
 
+        <!-- Wohnung Einzug -->
         <div class="pill-card">
           <h3 style="margin:0 0 0.75rem;font-size:0.95rem;font-weight:600;display:flex;align-items:center;gap:0.4rem;">
             <span style="width:8px;height:8px;border-radius:999px;background:#22c55e;"></span>
@@ -625,7 +667,8 @@
             </select>
           </div>
 
-          <div style="display:flex;align-items:center;gap:0.55rem;">
+          <!-- Aufzug linksbündig -->
+          <div style="display:flex;align-items:center;justify-content:flex-start;gap:0.55rem;">
             <input type="checkbox" id="has_elevator_to" />
             <label for="has_elevator_to" style="margin:0;font-size:0.88rem;cursor:pointer;">Aufzug vorhanden</label>
           </div>
@@ -688,20 +731,24 @@
 
     <!-- STEP 4: MATCHING -->
     <div class="form-step" data-step="4">
+      <!-- Loading-Phase -->
       <div id="matchingLoading" class="matching-loading">
         <div class="spinner"></div>
         <div>Wir suchen passende Umzugsunternehmen in Ihrer Nähe …</div>
       </div>
 
+      <!-- Ergebnis -->
       <div id="matchingResult" style="display:none;">
         <h2 class="step-title">Unternehmen in Ihrer Nähe gefunden!</h2>
         <p class="step-subtitle">Wir haben passende Umzugsunternehmen in Ihrer Region identifiziert.</p>
 
-        <div class="matching-circle"><span>✓</span></div>
+        <div class="matching-circle">
+          <span>✓</span>
+        </div>
 
         <div class="matching-stats">
           <div class="matching-card">
-            <div class="matching-num">4–6</div>
+            <div class="matching-num">bis zu 5</div>
             <div class="matching-label">Umzugsfirmen</div>
           </div>
           <div class="matching-card">
@@ -735,14 +782,21 @@
 
           <div style="margin-bottom:0.6rem;">
             <label for="phone">Telefonnummer*</label>
-            <input id="phone" type="tel" inputmode="numeric" placeholder="z.B. 017612345678 oder +4917612345678" maxlength="16" />
+            <!-- Kein Beispiel/Placeholder + nur Zahlen + Maxlänge -->
+            <input id="phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="15" />
             <div class="error" id="err_phone"></div>
           </div>
 
           <div style="margin-bottom:0.6rem;">
             <label for="email">E-Mail-Adresse*</label>
-            <input id="email" type="email" />
+            <input id="email" type="email" autocomplete="email" />
             <div class="error" id="err_email"></div>
+
+            <!-- Vorbereitung: E-Mail-Verifizierung (Backend schickt später automatisch Mail) -->
+            <div class="email-verify-box">
+              <strong>Wichtig:</strong> Nach dem Absenden senden wir Ihnen einen Bestätigungslink per E-Mail.
+              Erst danach werden Ihre Kontaktdaten an passende Umzugsunternehmen weitergegeben.
+            </div>
           </div>
         </div>
 
@@ -781,11 +835,13 @@
     <!-- STEP 6: FERTIG / DANKESSEITE -->
     <div class="form-step" data-step="6">
       <div class="success-message">
-        <div class="success-circle"><span>✓</span></div>
+        <div class="success-circle">
+          <span>✓</span>
+        </div>
         <h2>Vielen Dank für Ihre Anfrage!</h2>
-        <p class="hint" id="successText">
-          Bitte bestätigen Sie jetzt Ihre E-Mail-Adresse. Wir senden Ihnen gleich eine Bestätigungs-Mail zu.
-          Erst danach geben wir Ihre Anfrage an passende Umzugsunternehmen weiter.
+        <p class="hint">
+          Bitte prüfen Sie jetzt Ihr E-Mail-Postfach und bestätigen Sie Ihre E-Mail-Adresse über den Link.
+          Danach können passende Umzugsunternehmen Sie kontaktieren.
         </p>
         <p class="hint" style="margin-top:0.75rem;">
           Datenschutz: Ihre Daten werden ausschließlich zur Vermittlung von Umzugsangeboten verwendet
@@ -794,12 +850,14 @@
       </div>
     </div>
 
+    <!-- Nav row -->
     <div class="nav-row" id="navRow">
       <button class="btn btn-outline" id="btnBack">Zurück</button>
       <button class="btn btn-primary" id="btnNext">Weiter</button>
     </div>
   </main>
 
+  <!-- KLEINER FOOTER MIT LINKS -->
   <footer class="site-footer">
     <div class="container">
       <a href="impressum.html">Impressum</a> ·
@@ -809,25 +867,15 @@
 </div>
 
 <script>
-  /**
-   * SETTINGS
-   * - USE_API: false = nur UI/Danke-Seite (für GitHub Pages ohne Backend)
-   * - USE_API: true  = sendet an Laravel Backend
-   */
-  const USE_API = true;
-
-  /**
-   * API_URL:
-   * - Lokal testen:  "http://127.0.0.1:8000/api/leads"
-   * - Live später:  "https://dein-backend.de/api/leads"
-   * - Wenn Frontend & Backend auf gleicher Domain laufen: "/api/leads"
-   */
-  const API_URL = "/api/leads";
-
   const TOTAL_STEPS = 5; // letzter Formular-Schritt, 6 = Danke
   let currentStep = 1;
   const formData = {};
   let todayStr = null;
+
+  // Vorbereitung für später:
+  // Wenn Landingpage + Backend auf Server verbunden sind, funktioniert der API Call sofort.
+  // Auf GitHub Pages (ohne Backend) wird der Call fehlschlagen -> dann fällt es automatisch auf "Danke-Seite" zurück.
+  const API_URL = "/api/leads";
 
   const stepEls = document.querySelectorAll(".form-step");
   const indicatorItems = document.querySelectorAll("#stepIndicator .step-item");
@@ -876,39 +924,14 @@
     validateStep();
   }
 
-  function normalizeGermanPhone(raw) {
-    let s = (raw || "").trim();
-
-    // Alle Leerzeichen entfernen
-    s = s.replace(/\s+/g, "");
-
-    // +49... -> 0...
-    if (s.startsWith("+49")) {
-      s = "0" + s.slice(3);
-    }
-
-    // 0049... -> 0...
-    if (s.startsWith("0049")) {
-      s = "0" + s.slice(4);
-    }
-
-    // Nur Ziffern behalten
-    s = s.replace(/\D/g, "");
-
-    // max 15 Ziffern (E.164), plus ggf. führende 0 ist schon drin -> wir begrenzen hart
-    if (s.length > 15) {
-      s = s.slice(0, 15);
-    }
-
-    return s;
-  }
-
   function collectData() {
-    formData.move_from_zip = document.getElementById("move_from_zip").value.trim();
-    formData.move_from_city = document.getElementById("move_from_city").value.trim();
-    formData.move_to_zip   = document.getElementById("move_to_zip").value.trim();
-    formData.move_to_city  = document.getElementById("move_to_city").value.trim();
+    // Step 1
+    formData.move_from_zip  = (document.getElementById("move_from_zip").value || "").trim();
+    formData.move_from_city = (document.getElementById("move_from_city").value || "").trim();
+    formData.move_to_zip    = (document.getElementById("move_to_zip").value || "").trim();
+    formData.move_to_city   = (document.getElementById("move_to_city").value || "").trim();
 
+    // Step 2
     formData.living_space_from = document.getElementById("living_space_from").value;
     formData.rooms_from        = document.getElementById("rooms_from").value;
     formData.floor_from        = document.getElementById("floor_from").value;
@@ -922,17 +945,17 @@
     const notesEl = document.getElementById("move_notes");
     formData.move_notes = notesEl ? notesEl.value.trim() : "";
 
-    formData.customer_name   = document.getElementById("customer_name").value.trim();
-    formData.phone           = normalizeGermanPhone(document.getElementById("phone").value);
-    formData.email           = document.getElementById("email").value.trim();
-    formData.move_date_type  = document.getElementById("move_date_type").value;
-    formData.move_date       = document.getElementById("move_date").value;
-    formData.move_date_from  = document.getElementById("move_date_from").value;
-    formData.move_date_to    = document.getElementById("move_date_to").value;
+    // Step 3 – wird über choice-cards direkt auf formData geschrieben:
+    // formData.move_type, formData.is_international, formData.move_scope
 
-    // Honeypot
-    const hp = document.getElementById("website");
-    formData.honey = hp ? (hp.value || "").trim() : "";
+    // Step 5
+    formData.customer_name  = (document.getElementById("customer_name").value || "").trim();
+    formData.phone          = (document.getElementById("phone").value || "").trim();
+    formData.email          = (document.getElementById("email").value || "").trim();
+    formData.move_date_type = document.getElementById("move_date_type").value;
+    formData.move_date      = document.getElementById("move_date").value;
+    formData.move_date_from = document.getElementById("move_date_from").value;
+    formData.move_date_to   = document.getElementById("move_date_to").value;
   }
 
   function clearErrors() {
@@ -944,15 +967,18 @@
     collectData();
     let valid = true;
 
+    // PLZ nur Zahlen (5)
+    const onlyDigits5 = (v) => /^\d{5}$/.test(v);
+
     if (currentStep === 1) {
-      if (!formData.move_from_zip) {
+      if (!onlyDigits5(formData.move_from_zip)) {
         const el = document.getElementById("err_from_zip");
-        if (el) el.textContent = "Bitte Postleitzahl eingeben.";
+        if (el) el.textContent = "Bitte gültige Postleitzahl eingeben (5 Ziffern).";
         valid = false;
       }
-      if (!formData.move_to_zip) {
+      if (!onlyDigits5(formData.move_to_zip)) {
         const el = document.getElementById("err_to_zip");
-        if (el) el.textContent = "Bitte Postleitzahl eingeben.";
+        if (el) el.textContent = "Bitte gültige Postleitzahl eingeben (5 Ziffern).";
         valid = false;
       }
     }
@@ -962,7 +988,8 @@
           typeof formData.is_international === "undefined" ||
           !formData.move_scope) {
         const el = document.getElementById("err_step3");
-        if (el) el.textContent = "Bitte wählen Sie jeweils eine Option aus allen Bereichen.";
+        if (el) el.textContent =
+          "Bitte wählen Sie jeweils eine Option aus allen Bereichen.";
         valid = false;
       }
     }
@@ -974,14 +1001,15 @@
         valid = false;
       }
 
-      // Telefon: nur Ziffern, min 7, max 15
-      if (!formData.phone) {
+      // Telefon: nur Ziffern, Länge 7–15
+      const phoneDigits = (formData.phone || "").replace(/\D/g, "");
+      if (!phoneDigits) {
         const el = document.getElementById("err_phone");
         if (el) el.textContent = "Bitte Telefonnummer eingeben.";
         valid = false;
-      } else if (formData.phone.length < 7 || formData.phone.length > 15) {
+      } else if (phoneDigits.length < 7 || phoneDigits.length > 15) {
         const el = document.getElementById("err_phone");
-        if (el) el.textContent = "Bitte eine gültige Telefonnummer eingeben.";
+        if (el) el.textContent = "Bitte gültige Telefonnummer eingeben.";
         valid = false;
       }
 
@@ -992,10 +1020,14 @@
       }
 
       let hasDate = false;
+
       if (formData.move_date_type === "fest") {
         hasDate = !!formData.move_date;
       } else {
-        hasDate = !!formData.move_date_from && !!formData.move_date_to && formData.move_date_from <= formData.move_date_to;
+        hasDate =
+          !!formData.move_date_from &&
+          !!formData.move_date_to &&
+          formData.move_date_from <= formData.move_date_to;
       }
 
       if (!hasDate) {
@@ -1047,27 +1079,33 @@
     validateStep();
   });
 
-  // Live-Validierung
+  // Live-Validierung für Step 1 & 5
   document.querySelectorAll("input,select,textarea").forEach(el => {
     el.addEventListener("input", () => {
-      if (currentStep === 1 || currentStep === 5) validateStep();
+      if (currentStep === 1 || currentStep === 5) {
+        validateStep();
+      }
     });
   });
 
-  // Telefon: live normalisieren (nur wenn Nutzer tippt)
+  // Telefonnummer: nur Zahlen + maxlength wird respektiert
   const phoneInput = document.getElementById("phone");
-  if (phoneInput) {
-    phoneInput.addEventListener("input", () => {
-      const before = phoneInput.value;
-      const normalized = normalizeGermanPhone(before);
-      phoneInput.value = normalized;
-      if (currentStep === 5) validateStep();
+  phoneInput.addEventListener("input", () => {
+    const digits = phoneInput.value.replace(/\D/g, "");
+    phoneInput.value = digits.slice(0, 15);
+    if (currentStep === 5) validateStep();
+  });
+
+  // PLZ: nur Zahlen + 5 Stellen
+  const z1 = document.getElementById("move_from_zip");
+  const z2 = document.getElementById("move_to_zip");
+  [z1, z2].forEach(z => {
+    z.addEventListener("input", () => {
+      const digits = z.value.replace(/\D/g, "");
+      z.value = digits.slice(0, 5);
+      if (currentStep === 1) validateStep();
     });
-    phoneInput.addEventListener("blur", () => {
-      phoneInput.value = normalizeGermanPhone(phoneInput.value);
-      if (currentStep === 5) validateStep();
-    });
-  }
+  });
 
   // Zurück
   btnBack.addEventListener("click", () => {
@@ -1093,11 +1131,12 @@
 
       move_notes: formData.move_notes || null,
       move_type: formData.move_type || null,
-      is_international: typeof formData.is_international === "boolean" ? formData.is_international : null,
+      is_international:
+        typeof formData.is_international === "boolean" ? formData.is_international : null,
       move_scope: formData.move_scope || null,
 
       customer_name: formData.customer_name || null,
-      phone: formData.phone || null,
+      phone: (formData.phone || "").replace(/\D/g, "") || null,
       email: formData.email || null,
 
       move_date_type: formData.move_date_type || null,
@@ -1105,11 +1144,8 @@
       move_date_from: formData.move_date_from || null,
       move_date_to: formData.move_date_to || null,
 
-      // Honeypot: wird später im Backend ausgewertet
-      honey: formData.honey || null,
-
-      // Vorbereitung: Backend kann später so antworten:
-      // { success: true, verify_required: true }
+      // Vorbereitung: später vom Backend genutzt (E-Mail Verifizierung Flow)
+      email_verification_required: true
     };
   }
 
@@ -1117,62 +1153,48 @@
   btnNext.addEventListener("click", async () => {
     if (!validateStep()) return;
 
+    // Zwischen-Schritte → nur weiter
     if (currentStep < TOTAL_STEPS) {
       showStep(currentStep + 1);
       return;
     }
 
+    // Letzter Schritt → API Call (wenn Backend verfügbar)
     collectData();
-
-    // Honeypot: Wenn gefüllt -> UX normal, intern nix machen (wenn USE_API aktiv ist, gehen wir trotzdem "Erfolg")
-    // Wir schicken es trotzdem mit, Backend kann es auswerten.
     const payload = buildPayloadForApi();
 
-    // Buttons sofort sperren (Doppelklick-Schutz)
     btnNext.disabled = true;
-    btnBack.disabled = true;
-    const oldText = btnNext.textContent;
     btnNext.textContent = "Senden…";
+    btnBack.disabled = true;
 
-    try {
-      if (USE_API) {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: JSON.stringify(payload)
-        });
+    try{
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
 
-        const result = await response.json().catch(() => ({}));
+      const result = await response.json().catch(() => ({}));
 
-        // Wenn Backend down/Fehler -> User bekommt Fehlermeldung
-        if (!response.ok) {
-          alert(
-            result.message ||
-            "Es ist ein Fehler bei der Übermittlung Ihrer Anfrage aufgetreten. Bitte prüfen Sie Ihre Eingaben."
-          );
-          btnNext.disabled = false;
-          btnBack.disabled = false;
-          btnNext.textContent = oldText;
-          return;
-        }
-
-        // Optional: Backend kann später verify_required liefern
-        // Wenn verify_required=false, könntest du hier den Text anpassen.
+      // Wenn Backend noch nicht erreichbar (z.B. GitHub Pages), dann nicht blockieren:
+      if (!response.ok) {
+        console.log("API nicht ok / noch nicht verbunden:", response.status, result);
       }
 
       document.querySelector("main.card").scrollIntoView({ behavior: "smooth" });
       showStep(6);
-
-    } catch (err) {
-      console.error("Verbindungsfehler:", err);
-      alert("Es ist ein Verbindungsfehler aufgetreten. Bitte später erneut versuchen.");
+    } catch(err){
+      // Offline/Backend nicht erreichbar → trotzdem Danke-Seite
+      console.log("API nicht erreichbar (noch nicht online):", err);
+      document.querySelector("main.card").scrollIntoView({ behavior: "smooth" });
+      showStep(6);
+    } finally {
       btnNext.disabled = false;
       btnBack.disabled = false;
-      btnNext.textContent = oldText;
-      return;
+      btnNext.textContent = "Angebote erhalten";
     }
   });
 
